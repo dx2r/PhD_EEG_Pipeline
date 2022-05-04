@@ -1,4 +1,4 @@
-function [connectivity_values] = TF_calculate_functional_connectivity(data, sample_freq, epoch_length, connectivity_measure, varargin)
+function [connectivity_values] = TF_Calculate_Functional_Connectivity(data, sample_freq, epoch_length, connectivity_measure, varargin)
 
 %%%
 %
