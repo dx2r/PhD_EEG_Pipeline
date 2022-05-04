@@ -12,7 +12,7 @@
 % STEP 0: WRITE IN SHORT WHAT YOU ARE GOING TO DO BELOW %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Graph analysis: Weighted degree from AEC in the beta1 range for the project EEGRUM.
+% WRITE HERE
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 1: ADJUST VARIABLES HERE %
@@ -22,7 +22,7 @@
 % Check each variable and check if it is correct or not.
 
     %%%
-    % LOCATION VARIABLES
+    % DATA LOCATION VARIABLES
     %%% 
 
         % don't put a backslash at the end of the path
@@ -34,7 +34,7 @@
     % MAP NAME VARIABLES
     %%%
     
-        pow_results_map_name = 'Testing';
+        pow_results_map_name = '';
         fc_results_map_name = '';
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
@@ -52,13 +52,17 @@
     %%%
     % BRAIN REGIONS
     %%%
+        % If the analysis needs to be run for specific brain regions, use the following:
+        %   region_1 = 13;
+        %   region_1_name = "Left dorsolateral prefrontal cortex"
+        %   region_2 = 14;
+        %   region_2_name = "Right dorsolateral prefrontal cortex"
+        %
         % If the analysis needs to be run for the whole brain, use the following:
         %   region_1 = -1;
         %   region_1_name = "Whole Brain";
 
-        region_1 = -1;
-        region_1_name = "Whole Brain";
-
+        
     %%%
     % EPOCH INFORMATION
     %%%
@@ -76,11 +80,18 @@
     %%%
     
         %POWER ANALYSIS
-        analysis_choice_power = "average_relative_power";
-        % for average_relative_power:
-        %   bin_width, delta_range, theta_range, alpha_range, beta_range (see "TF_Average_Relative_Power.m")
+        % name of the analysis choice you make
+        % possibilities:
+        %   "average_relative_power_all" -> get average relative power from the delta, theta, alpha and beta frequency range  
+        %   "average_relative_power_specific" -> get average relative power from specific frequency range
+        analysis_choice_power = "";  
+        % variable amount of arguments which should be given given the analysis choice
+        % for "average_relative_power_all":
+        %   pow_vararging = {0.1, [0.5 4], [4 8], [8 13], [13 30]};
+        %TODO HERE
+        %   bin_width, delta_range, theta_range, alpha_range, beta_range (see "TF_Average_Relative_Power_All_Frequencybands.m")
         %   example: pow_vararging = {0.1, [0.5 4], [4 8], [8 13], [13 30]};
-        pow_vararging = {0.1, delta_frequency_range, theta_frequency_range, alpha_frequency_range, beta_frequency_range};
+        pow_vararging = {};
         %FUNCTIONAL CONNECTIVITY ANALYSIS
         analysis_choice_fc = "";
         fc_varargin = [];
@@ -89,10 +100,15 @@
         %DYNAMIC CAUSAL MODELING ANALYSIS
         analysis_choice_dyncausal = "";
         %GRAPH ANALYSIS ANALYSIS
-        analysis_choice_graph = "degree";
-        gr_bin_or_weight = "weighted"; %"binary" or "weighted"
+        % name of the anaysis choice you make
+        % possibilities: 
+        %   TODO HERE
+        analysis_choice_graph = "";
+        gr_bin_or_weight = ""; %"binary" or "weighted"
         gr_threshold = [];
-        gr_undir_or_dir = "undirected"; %"directed" or "undirected"
+        gr_undir_or_dir = ""; %"directed" or "undirected"
+        % variable amount of arguments which should be given given the analysis choice
+        % TODO HERE
         graph_varargin = {0};
         
     %%%
@@ -110,7 +126,7 @@
         %DYNAMIC CAUSAL MODELING ANALYSIS
         run_analysis_dyncausal = 0;
         %GRAPH ANALYSIS ANALYSIS
-        run_analysis_graph = 1;
+        run_analysis_graph = 0;
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 2: LOAD IN DATASET %
