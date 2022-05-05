@@ -22,31 +22,33 @@ function [selected_timeseries, selected_names] = Extract_Time_Series_And_Names(v
 %Step 0: Tell what is going on
 disp("Extracting Necessary Timeseries...");
 %Step 1: check how many regions have been selected
+varargin = varargin{1}; %remove one layer of cell arrays
 region_amount = (size(varargin,2) - 1)/2; %-1 because the first argument is the data itself, /2 because for each region its index and name is given
 if(region_amount < 1) %throw error if no regions are given
    error("You have not defined any regions. Please define the region index/indices."); 
 end
+
 %Step 2: get the size of the dataset
 [timeseries_amount,timepoints_amount] = size(varargin{1});
 %Step 3: build the selected dataframe
-if(varargin{2} == -1 || varargin{3} == "whole Brain") %check if whole-brain analysis is needed
+if(varargin{2}{1} == -1 || varargin{3} == "whole Brain") %check if whole-brain analysis is needed
     disp("Whole brain analysis has been selected...");
     selected_timeseries = varargin{1}; %give back the whole dataset
     temp_var = Check_Brainregions;
-    selected_names = temp_var(:,1); %five back all region names
+    selected_names = temp_var(:,1); %give back all region names
 else % only certain regions are selected
     selected_timeseries = zeros(region_amount, timepoints_amount); %emtpy structure for the timeseries
     selected_names = "Brain Region";
     brainregion_list = Check_Brainregions();
     brainregion_list = brainregion_list(:,1);
     for timeseries_i = 1:region_amount
-        if(size(varargin{2*timeseries_i},2) ~= 1) %the current region is built from multiple regions in the atlas
-            selected_timeseries(timeseries_i,:) = mean(varargin{1}(varargin{2*timeseries_i},:)); %mean of the selected timeseries
-            selected_names(timeseries_i) = varargin{2*timeseries_i + 1}; %name that has been given as the argument
+        if(size(varargin{2*timeseries_i}{1},2) ~= 1) %the current region is built from multiple regions in the atlas
+            selected_timeseries(timeseries_i,:) = mean(varargin{1}(varargin{2*timeseries_i}{1},:)); %mean of the selected timeseries
+            selected_names(timeseries_i) = varargin{2*timeseries_i + 1}{1}; %name that has been given as the argument
         else
-            selected_timeseries(timeseries_i,:) = varargin{1}(varargin{2*timeseries_i},:); %selected timeseries
+            selected_timeseries(timeseries_i,:) = varargin{1}(varargin{2*timeseries_i}{1},:); %selected timeseries
             if(varargin{2*timeseries_i + 1} == "") %check if no name is given
-                selected_names(timeseries_i) = {table2cell(brainregion_list(varargin{2*timeseries_i},1))}; %long chain of indexing to obtain the string value itself, not a table element.
+                selected_names(timeseries_i) = {table2cell(brainregion_list(varargin{2*timeseries_i}{1},1))}; %long chain of indexing to obtain the string value itself, not a table element.
             else
                 selected_names(timeseries_i) = varargin{2*timeseries_i + 1}; %name that has been given as the argument
             end
