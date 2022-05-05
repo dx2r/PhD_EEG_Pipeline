@@ -1,8 +1,8 @@
 %%%
 %
 % General Script that is used to perform Source Level Analyses.
-% This is the script in which all variables are defined that will be needed for the further analysis.
-% To use this script correctly, go through all steps and (un)comment each part you do or don't need.
+% This is the script in which all variables are defined that will be needed for the further analysis. 
+% Only this file should be used for source level analysis. All other functions are wrapped in this script.
 %
 % Gert Vanhollebeke (02/12/2021 - )
 %
@@ -26,14 +26,17 @@
     %%% 
 
         % don't put a backslash at the end of the path
-        location_data_from = 'F:\Study - EEGSTRESS\Dataset\EEG Source Data (130 Regios)'; %full path to the directory where the data is located.
-        location_data_to = 'F:\Study - EEGSTRESS\Results'; %full path to the directory where the new data needs to be stored. 
-        location_data_information = 'F:\Study - EEGSTRESS\Results\Analysis Information'; %full path to the directory where the dataset information needs to be stored
+        % example: 'F:\Study - EEGSTRESS\Dataset\EEG Source Data (130 Regios)'
+        location_data_from = ''; %full path to the directory where the data is located.
+        location_data_to = ''; %full path to the directory where the new data needs to be stored. 
+        location_data_information = ''; %full path to the directory where the dataset information needs to be stored
     
     %%%
     % MAP NAME VARIABLES
     %%%
     
+        %give the name of the map you want the results to be stored in
+        % example: pow_results_map_name = 'POWER - DLPFC - Alpha';
         pow_results_map_name = '';
         fc_results_map_name = '';
         dynfc_resuls_map_name = '';
@@ -43,22 +46,29 @@
     %%%
     % FREQUENCY RANGES
     %%%
-
-        delta_frequency_range = [0.5 4]; % frequency range for the delta frequency band (Hz)
-        theta_frequency_range = [4 8]; % frequency range for the theta frequency band (Hz)
-        alpha_frequency_range = [8 13]; % frequency range for the alpha frequency band (Hz)
-        beta_frequency_range = [14 30]; % frequency range for the beta frequency band (Hz)
+    
+        % give frequency ranges for the known frequency bands in which you are interested
+        % example: delta_frequency_range = [0.5 4];
+        delta_frequency_range = []; % frequency range for the delta frequency band (Hz)
+        theta_frequency_range = []; % frequency range for the theta frequency band (Hz)
+        alpha_frequency_range = []; % frequency range for the alpha frequency band (Hz)
+        beta_frequency_range = []; % frequency range for the beta frequency band (Hz)
 
     %%%
     % BRAIN REGIONS
     %%%
-        % If the analysis needs to be run for specific brain regions, use the following:
+    
+        % selection of the brain regions for which the analysis should be conducted
+        % For more information on which brain regions are available and which indices these have, use the function "Check_Brainregions"
+        % You can write "Check_Brainregions" in the command window to see all regions
+        %
+        % If the analysis needs to be run for specific brain regions, use the following example:
         %   region_1 = 13;
         %   region_1_name = "Left dorsolateral prefrontal cortex"
         %   region_2 = 14;
         %   region_2_name = "Right dorsolateral prefrontal cortex"
         %
-        % If the analysis needs to be run for the whole brain, use the following:
+        % If the analysis needs to be run for the whole brain, use the following as code:
         %   region_1 = -1;
         %   region_1_name = "Whole Brain";
 
@@ -66,33 +76,43 @@
     %%%
     % EPOCH INFORMATION
     %%%
-
-        epoch_length = 3; %length of the epochs (defined in the preprocessing) in seconds
+        
+        %define the length of the epochs for which you want the calculations to be done (in seconds)
+        % example: epoch_length = 3;
+        epoch_length = 3; 
 
     %%%
     % EEG INFORMATION
     %%%
-
-        sample_frequency = 512; %sample frequency of the EEG signal
+        
+        %define the sampling frequency (in Hz)
+        % example: sample_frequency = 512; 
+        sample_frequency = 512;
 
     %%%
     % ANALYSIS INFORMATION
     %%%
-    
+        
         %POWER ANALYSIS
-        % name of the analysis choice you make
+        % name of the analysis choice you want
         % possibilities:
         %   "average_relative_power_all" -> get average relative power from the delta, theta, alpha and beta frequency range  
         %   "average_relative_power_specific" -> get average relative power from specific frequency range
+        
         analysis_choice_power = "";  
+        
         % variable amount of arguments which should be given given the analysis choice
-        % for "average_relative_power_all":
-        %   pow_vararging = {0.1, [0.5 4], [4 8], [8 13], [13 30]};
-        %TODO HERE
-        %   bin_width, delta_range, theta_range, alpha_range, beta_range (see "TF_Average_Relative_Power_All_Frequencybands.m")
-        %   example: pow_vararging = {0.1, [0.5 4], [4 8], [8 13], [13 30]};
+        % for "average_relative_power_all": {bin_width, delta_frequency_range, theta_frequency_range, alpha_frequency_range, beta_frequency_range}
+        %   pow_varargin = {0.5, [0.5 4], [4 8], [8 13], [13 30]};
+        % for "average_relative_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
+        %   pow_varargin = {0.5, [8 13], [0.5 40]};
+
         pow_vararging = {};
+        
         %FUNCTIONAL CONNECTIVITY ANALYSIS
+        % name of the analysis choice you want
+        % possibilities:
+        %   
         analysis_choice_fc = "";
         fc_varargin = [];
         %DYNAMIC FUNCTIONAL CONNECTIVITY ANALYSIS
