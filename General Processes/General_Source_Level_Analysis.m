@@ -4,6 +4,9 @@
 % This is the script in which all variables are defined that will be needed for the further analysis. 
 % Only this file should be used for source level analysis. All other functions are wrapped in this script.
 %
+% NOTE: only one analysis can be done at a time. This is done so each analysis has its own unique analysis file for publication on osf.
+% NOTE: Step 8 contains an auditory cue to let you know if a participant has finished, you can delete this.
+%
 % Gert Vanhollebeke (02/12/2021 - )
 %
 %%%
@@ -49,6 +52,7 @@
     
         % give frequency ranges for the known frequency bands in which you are interested
         % example: delta_frequency_range = [0.5 4];
+        
         delta_frequency_range = []; % frequency range for the delta frequency band (Hz)
         theta_frequency_range = []; % frequency range for the theta frequency band (Hz)
         alpha_frequency_range = []; % frequency range for the alpha frequency band (Hz)
@@ -61,17 +65,28 @@
         % selection of the brain regions for which the analysis should be conducted
         % For more information on which brain regions are available and which indices these have, use the function "Check_Brainregions"
         % You can write "Check_Brainregions" in the command window to see all regions
+        % This way of working is not efficient, but is done to make sure that the correct brain regions are selected, 
+        % so a name (not mandatory) AND a brainregion index should be given.
         %
         % If the analysis needs to be run for specific brain regions, use the following example:
-        %   region_1 = 13;
-        %   region_1_name = "Left dorsolateral prefrontal cortex"
-        %   region_2 = 14;
-        %   region_2_name = "Right dorsolateral prefrontal cortex"
+        %   brainregion_amount = 4;
+        %   brainregion_indices = {1, ...
+        %                          2, ...
+        %                          [5 13 18],...
+        %                          16};
+        %   brainregion_names = ["",...
+        %                        "Region name I want",...
+        %                        "Always give names when you cant to combine multiple regions",...
+        %                        "",...];
         %
         % If the analysis needs to be run for the whole brain, use the following as code:
-        %   region_1 = -1;
-        %   region_1_name = "Whole Brain";
+        %   brainregion_amount = 1; %ALWAYS 1!!!
+        %   brainregion_indices = {-1};
+        %   brainregion_names = ["Whole Brain"];
 
+        brainregion_amount = 1;
+        brainregion_indices = {};
+        brainregion_names = [];
         
     %%%
     % EPOCH INFORMATION
@@ -176,23 +191,22 @@ if(run_analysis_power == 1)
             %Tell what is going on (which participant is worked on)
             disp(current_participant_name);
             %load the timeseries of the current participant
-            current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));
-            %define the regions which need to be used
-            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_datafile,...
-                                                                                                                      region_1, region_1_name,...
-                                                                                                                      region_2, region_2_name,...
-                                                                                                                      region_3, region_3_name,...
-                                                                                                                      region_4, region_4_name,...
-                                                                                                                      region_5, region_5_name,...
-                                                                                                                      region_6, region_6_name);
-            %run the functional connectivity analysis
+            current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));                    
+            %build the complete argument list to be able to extract the specific timeseries
+            current_participant_table = Build_Brainregion_Celltable(current_participant_datafile,...
+                                                                    brainregion_amount,...
+                                                                    brainregion_indices,...
+                                                                    brainregion_names);
+            %extract only the specific timeseries on which the calculations need to be performed on
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
+            %run the power analysis
             current_participant_values = TF_calculate_Power(current_participant_region_timeseries,...
                                                                                         sample_frequency,...
                                                                                         epoch_length,...
                                                                                         analysis_choice_power,...
                                                                                         pow_varargin);
             
-                                                                                    %save the results in the previously defined map
+            %save the individual results in the previously defined map
             Save_Results_To_Directory(current_participant_values,current_participant_name,Power_Results_map);
         end
         
