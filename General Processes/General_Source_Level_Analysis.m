@@ -122,7 +122,7 @@
         % for "average_relative_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
         %   pow_varargin = {0.5, [8 13], [0.5 40]};
 
-        pow_vararging = {};
+        pow_varargin = {};
         
         %FUNCTIONAL CONNECTIVITY ANALYSIS
         % name of the analysis choice you want
@@ -200,7 +200,7 @@ if(run_analysis_power == 1)
             %extract only the specific timeseries on which the calculations need to be performed on
             [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
             %run the power analysis
-            current_participant_values = TF_calculate_Power(current_participant_region_timeseries,...
+            current_participant_values = TF_Calculate_Power(current_participant_region_timeseries,...
                                                                                         sample_frequency,...
                                                                                         epoch_length,...
                                                                                         analysis_choice_power,...
