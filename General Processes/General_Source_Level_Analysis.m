@@ -33,7 +33,8 @@
         location_data_from = ''; %full path to the directory where the data is located.
         location_data_to = ''; %full path to the directory where the new data needs to be stored. 
         location_data_information = ''; %full path to the directory where the dataset information needs to be stored
-    
+        location_data_statistics = ''; %full path to the directory where the statistical .csv file needs to be stored.
+
     %%%
     % MAP NAME VARIABLES
     %%%
@@ -75,14 +76,14 @@
         %                          [5 13 18],...
         %                          16};
         %   brainregion_names = ["",...
-        %                        "Region name I want",...
-        %                        "Always give names when you cant to combine multiple regions",...
+        %                        "Region_name_I_want",...
+        %                        "Always_give_names_when_you_want_to_combine_multiple_regions",...
         %                        "",...];
         %
         % If the analysis needs to be run for the whole brain, use the following as code:
         %   brainregion_amount = 1; %ALWAYS 1!!!
         %   brainregion_indices = {-1};
-        %   brainregion_names = ["Whole Brain"];
+        %   brainregion_names = ["Whole_Brain"]; %always use underscores when combining multiple words!
 
         brainregion_amount = 1;
         brainregion_indices = {};
@@ -128,22 +129,35 @@
         % name of the analysis choice you want
         % possibilities:
         %   
+        
         analysis_choice_fc = "";
+        
         fc_varargin = [];
+        
         %DYNAMIC FUNCTIONAL CONNECTIVITY ANALYSIS
+        
         analysis_choice_dynfc = "";
+        
         %DYNAMIC CAUSAL MODELING ANALYSIS
+        
         analysis_choice_dyncausal = "";
+        
         %GRAPH ANALYSIS ANALYSIS
         % name of the anaysis choice you make
         % possibilities: 
         %   TODO HERE
+        
         analysis_choice_graph = "";
+        
         gr_bin_or_weight = ""; %"binary" or "weighted"
+        
         gr_threshold = [];
+        
         gr_undir_or_dir = ""; %"directed" or "undirected"
+        
         % variable amount of arguments which should be given given the analysis choice
         % TODO HERE
+        
         graph_varargin = {0};
         
     %%%
@@ -211,14 +225,19 @@ if(run_analysis_power == 1)
         end
         
     %%%
-    % SUBSTEP 3: SAVE ADDITIONAL INFORMATION
-    %%%       
-%         %Save the region names and indices to be able to reproduce the results.
-%         region_indices = {region_1; region_2; region_3; region_4; region_5; region_6};
-%         region_names = current_participant_region_names;
-%         Analysis_Region_Information = table(region_indices,region_names);
-%         Save_Results_To_Directory(Analysis_Region_Information, 'Analysis_Region_Information',location_data_information);
-
+    % SUBSTEP 3: BUILD STATISTICAL ANALYSIS FILE
+    %%%
+        %build a table with all obtained results and save it as a .csv file
+        group_power_results = Generate_Paths_All_Together(strcat(location_data_to,"\",pow_results_map_name));
+        statistical_table = Build_Statistical_Table(group_power_results,...
+                                                    pow_results_map_name,...
+                                                    analysis_choice_power,...
+                                                    brainregion_amount,...
+                                                    brainregion_names);
+        %go to destined location
+        cd(location_data_statistics);
+        %save table as .csv file in the destined folder
+        writetable(statistical_table, strcat(pow_results_map_name,".csv"));
     
 else
     disp('Power Analysis not selected...');
