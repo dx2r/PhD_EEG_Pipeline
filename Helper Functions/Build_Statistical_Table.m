@@ -49,7 +49,7 @@ if(strcmp(analysis_type,"average_relative_power_specific"))
     end
     %built final table
     result_table = num2cell(result_table); %double array to cell array
-    statistical_table = [participant_names, result_table] %combine both cell arrays
+    statistical_table = [participant_names, result_table]; %combine both cell arrays
     statistical_table = cell2table(statistical_table); %convert cell array to table
     statistical_table.Properties.VariableNames = column_names; %add names to the table          
 end
