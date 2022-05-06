@@ -52,7 +52,7 @@ if (strcmp(connectivity_measure,"AEC"))
         %say which epoch is ran
         disp(['Epoch ',num2str(epoch_i),' of ',num2str(epoch_amount),'...']);
         current_epoch = data(:,((epoch_i - 1)*epoch_timepoints) + 1:((epoch_i - 1)*epoch_timepoints) + epoch_timepoints); %get the current epoch data
-        current_AEC_values = TF_AAmplitude_Envelope_Correlation(current_epoch, sample_freq, freq_range); %calculate the AEC values for this epoch
+        current_AEC_values = TF_Amplitude_Envelope_Correlation(current_epoch, sample_freq, freq_range); %calculate the AEC values for this epoch
         connectivity_values = connectivity_values + current_AEC_values; %add the AEC values to the general matrix
     end
     %divide the AEC values by the amount of epochs to obtain the average value for each connection
