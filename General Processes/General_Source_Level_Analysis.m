@@ -11,6 +11,13 @@
 %
 %%%
 
+%%%
+% PREPARATION OF MATLAB
+%%%
+
+clc; %clear command window
+clear all; %clear workspace
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 0: WRITE IN SHORT WHAT YOU ARE GOING TO DO BELOW %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
