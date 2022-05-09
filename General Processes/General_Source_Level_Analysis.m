@@ -135,7 +135,7 @@ clear all; %clear workspace
         %FUNCTIONAL CONNECTIVITY ANALYSIS
         % name of the analysis choice you want
         % possibilities:
-        %   
+        %   "amplitude_envelope_correlation": Amplitude Envelope Correlation, adapted version from Hipp et al. (2012) (https://doi.org/10.1038/nn.3101)
         
         analysis_choice_fc = "";
         
