@@ -2,7 +2,7 @@ function [AEC_values] = TF_Amplitude_Envelope_Correlation(data, sample_freq, fre
 
 %%%
 %
-% Function that computes the amplitude envelope correlation (AEC), now with Ortghonalisation (Stabilized Gram-Schmidt Algorithm). 
+% Function that computes the amplitude envelope correlation (AEC), now with Time domain based Ortghonalisation (Stabilized Gram-Schmidt Algorithm). 
 % (see the following article for more information: https://doi.org/10.1038/nn.3101)
 % note: since asymmetric orthogonalization is used, two orthogonalizations are run, and the average is obtained.
 %
