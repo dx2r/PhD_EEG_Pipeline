@@ -139,6 +139,10 @@ clear all; %clear workspace
         
         analysis_choice_fc = "";
         
+        % variable amount of arguments which should be given given the analysis choice
+        % for "amplitude_envelope_correlation": {freq_range}
+        %   fc_varargin = {[13 20]}
+        
         fc_varargin = [];
         
         %DYNAMIC FUNCTIONAL CONNECTIVITY ANALYSIS
