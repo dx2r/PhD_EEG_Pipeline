@@ -287,7 +287,6 @@ if(run_analysis_fc == 1)
                                                                                         epoch_length,...
                                                                                         analysis_choice_fc,...
                                                                                         fc_varargin);
-            
             %save the results in the previously defined map
             Save_Results_To_Directory(current_participant_values,current_participant_name,FC_Results_map);
         end
