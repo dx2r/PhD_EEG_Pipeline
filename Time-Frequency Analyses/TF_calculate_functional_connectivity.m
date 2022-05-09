@@ -37,6 +37,7 @@ function [connectivity_values] = TF_Calculate_Functional_Connectivity(data, samp
 %%%
 
 if(strcmp(connectivity_measure, "amplitude_envelope_correlation"))
+    varargin = varargin{1};
     freq_range = varargin{1};
     connectivity_values = TF_Average_Amplitude_Envelope_Correlation(data, sample_freq, epoch_length, freq_range);
 end
