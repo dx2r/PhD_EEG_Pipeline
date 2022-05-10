@@ -31,7 +31,7 @@ if(strcmp(directionality,"undirectional"))
     counter = 1;
     for n_row = 1:brainregion_amount-1
         for n_column = n_row+1:brainregion_amount
-            current_FC_combination = strcat(brainregion_names(1,n_row)," <-> ",brainregion_names(1,n_column));
+            current_FC_combination = strcat(brainregion_names(1,n_row),"___",brainregion_names(1,n_column));
             name_combinations(1,counter) = cellstr(current_FC_combination);
             counter = counter + 1;
         end
@@ -41,8 +41,4 @@ elseif(strcmp(directionality,"directional"))
 else
     error("Wrong Directionality Name Is Given.");
 end
-
-
-
-
 end
