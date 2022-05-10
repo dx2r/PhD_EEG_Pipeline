@@ -31,13 +31,15 @@ function [line_output] = Convert_Undirected_FC_Matrix_To_Line(fc_matrix)
 
 %Step 0: Tell what is going on
 disp("Transforming fc matrix...");
-%Step 1: 
-
-
-
-
-
-
-
-
+%Step 1: build empty double array for results
+brainregion_amount = size(fc_matrix,1); %square matrix, doesn't matter which dimension is taken
+line_output = zeros(1,(brainregion_amount*(brainregion_amount-1))/2);
+%Step 2: build line_output
+counter = 1;
+for n_row = 1:brainregion_amount-1
+    for n_column = n_row+1:brainregion_amount
+        line_output(1,counter) = fc_matrix(n_row,n_column);
+        counter = counter+1;
+    end
+end
 end
