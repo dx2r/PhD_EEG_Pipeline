@@ -294,27 +294,19 @@ if(run_analysis_fc == 1)
     %%%
     % SUBSTEP 3: BUILD STATISTICAL ANALYSIS FILE
     %%%
-%         %build a table with all obtained results and save it as a .csv file
-%         group_fc_results = Generate_Paths_All_Together(strcat(location_data_to,"\",fc_results_map_name));
-%         statistical_table = Build_Statistical_Table(group_fc_results,...
-%                                                     fc_results_map_name,...
-%                                                     analysis_choice_fc,...
-%                                                     brainregion_amount,...
-%                                                     brainregion_names);
-%         %go to destined location
-%         cd(location_data_statistics);
-%         %save table as .csv file in the destined folder
-%         writetable(statistical_table, strcat(pow_results_map_name,".csv"));
-%         
-    %%%
-    % SUBSTEP 3: SAVE ADDITIONAL INFORMATION
-    %%%       
-        %Save the region names and indices to be able to reproduce the results.
-        region_indices = {region_1; region_2; region_3; region_4; region_5; region_6};
-        region_names = current_participant_region_names;
-        Analysis_Region_Information = table(region_indices,region_names);
-        Save_Results_To_Directory(Analysis_Region_Information, 'Analysis_Region_Information',location_data_information);
-
+        %build a table with all obtained results and save it as a .csv file
+        group_fc_results = Generate_Paths_All_Together(strcat(location_data_to,"\",fc_results_map_name));
+        statistical_table = Build_Statistical_Table(group_fc_results,...
+                                                    fc_results_map_name,...
+                                                    analysis_choice_fc,...
+                                                    brainregion_amount,...
+                                                    brainregion_names);
+        %go to destined location
+        cd(location_data_statistics);
+        %save table as .csv file in the destined folder
+        writetable(statistical_table, strcat(fc_results_map_name,".csv"));
+        
+    
 else
     disp('Functional Connectivity Analysis not selected...');
 end
