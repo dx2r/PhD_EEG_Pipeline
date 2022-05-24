@@ -143,7 +143,7 @@ clear all; %clear workspace
         % for "amplitude_envelope_correlation": {freq_range}
         %   fc_varargin = {[13 20]}
         
-        fc_varargin = [];
+        fc_varargin = {};
         
         %DYNAMIC FUNCTIONAL CONNECTIVITY ANALYSIS
         
