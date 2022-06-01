@@ -32,7 +32,7 @@ end
 %Step 2: get the size of the dataset
 [timeseries_amount,timepoints_amount] = size(varargin{1});
 %Step 3: build the selected dataframe
-if(varargin{2} == -1 || varargin{3} == "Whole_Brain") %check if whole-brain analysis is needed
+if(varargin{2}(1) == -1 || varargin{3} == "Whole_Brain") %check if whole-brain analysis is needed
     disp("Whole brain analysis has been selected...");
     selected_timeseries = varargin{1}; %give back the whole dataset
     temp_var = Check_Brainregions;
@@ -44,7 +44,7 @@ else % only certain regions are selected
     brainregion_list = brainregion_list(:,1);
     for timeseries_i = 1:region_amount
         if(size(varargin{2*timeseries_i},2) ~= 1) %the current region is built from multiple regions in the atlas
-            selected_timeseries(timeseries_i,:) = mean(varargin{1}(varargin{2*timeseries_i},:)); %mean of the selected timeseries
+            selected_timeseries(timeseries_i,:) = PCA(varargin{1}(varargin{2*timeseries_i},:),1); %First PCA of the selected timeseries
             selected_names(timeseries_i) = varargin{2*timeseries_i + 1}; %name that has been given as the argument
         else
             selected_timeseries(timeseries_i,:) = varargin{1}(varargin{2*timeseries_i},:); %selected timeseries
