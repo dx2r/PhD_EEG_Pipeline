@@ -15,10 +15,17 @@ function [electrode_layout] = Check_Electrode_Layout(path_to_electrode_file)
 %%%
 
 electrode_file = open(path_to_electrode_file);
-
-electrode_layout = electrode_file;
-
-
+structure_fieldname = fieldnames(electrode_file); %get the field name of the mat object
+electrode_file = getfield(electrode_file, structure_fieldname{1,1}); %Get the field with the variable name
+%now we have a cell array containing the electrodes, make sure that the structure is N x 1
+[size1, size2] = size(electrode_file);
+if(size2 > size1)
+    electrode_file = electrode_file.'; %transpose
+end
+disp("The available electrodes are: ");
+disp(electrode_file);
+electrode_layout = table(electrode_file);
+electrode_layout.Properties.VariableNames = {'Available_Electrodes'};
 
 
 
