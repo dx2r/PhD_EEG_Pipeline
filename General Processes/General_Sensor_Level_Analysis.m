@@ -88,9 +88,9 @@ clear all; %clear workspace
         %   electrode_names = ["All_Electrodes"]; %Always use underscore when combining multiple words!
         %   electrode_layout_information = 'path\to\matfile\with\electrode_layout.mat';
         
+        electrode_layout_information = 'C:\Users\Gert\OneDrive - UGent\Study - EEGSTRESS\Dataset - Feedback Moments\Feedback_Electrode_Layout.mat';
         electrode_amount = 0;
         electrode_names = [""];
-        electrode_layout_information = 'C:\Users\Gert\OneDrive - UGent\Study - EEGSTRESS\Dataset - Feedback Moments\Feedback_Electrode_Layout.mat';
             
     %%%
     % EPOCH INFORMATION
@@ -212,14 +212,14 @@ if(run_analysis_power == 1)
             %Tell what is going on (which participant is worked on)
             disp(current_participant_name);
             %load the timeseries of the current participant
-            current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));                    
+            current_participant_datafile = Extract_Timeseries_From_Sensor_Structure(dataset_files(participant_i));                    
             %build the complete argument list to be able to extract the specific timeseries
-            current_participant_table = Build_Brainregion_Celltable(current_participant_datafile,...
-                                                                    brainregion_amount,...
-                                                                    brainregion_indices,...
-                                                                    brainregion_names);
+            current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
+                                                                    electrode_amount,...
+                                                                    electrode_names);
             %extract only the specific timeseries on which the calculations need to be performed on
-            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
+                                                                                                                             electrode_layout_information);
             %run the power analysis
             current_participant_values = TF_Calculate_Power(current_participant_region_timeseries,...
                                                                                         sample_frequency,...
