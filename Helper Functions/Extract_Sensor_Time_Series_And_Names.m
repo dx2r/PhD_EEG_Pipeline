@@ -26,6 +26,7 @@ layout_link = layout_link{:};
 %extract dataset
 dataset = varargin{1}{1};
 varargin = varargin{1}; %remove one layer of cell arrays
+disp(varargin);
 electrode_amount = (size(varargin,2) - 1); %-1 because the first argument is the data itself
 if(electrode_amount < 1) %throw error if no regions are given
    error("You have not defined any electrodes. Please define the electrodes for which the analysis should be run."); 
@@ -43,41 +44,27 @@ else % only certain regions are selected
     selected_names = "Electrode"; %give random name to make variable
     electrode_list = Check_Electrode_Layout(layout_link);
     electrode_list = electrode_list(:,1);  
-    for timeseries_i = 1:electrode_amount
-        if(size(varargin{timeseries_i,2},2) ~= 1) %the current region is built from multiple regions in the atlas
-            %find all indices of the electrode of the current combined region
-            electrode_indices = zeros(1,size(varargin{timeseries_i,2},2));
+    for timeseries_i = 2:electrode_amount+1
+        if(size(varargin{timeseries_i},2) > 1) %check if the current varargin has a size greater than 1 (meaning multiple electrodes are selected)
+            %empty array for electrode indices
+            electrode_indices = zeros(1,size(varargin{timeseries_i},2));
             %build empty string array for combined name
             current_electrode_combination_name = "";
-            for electrode_i = 1:size(varargin{timeseries_i,2},2)
-                current_index = Find_Index_Of_Electrode(varargin{timeseries_i,2}(electrode_i),electrode_list);
+            for electrode_i = 1:size(varargin{timeseries_i},2)
+                current_index = Find_Index_Of_Electrode(varargin{timeseries_i}(electrode_i),electrode_list);
                 electrode_indices(1,electrode_i) = current_index;
-                current_name = varargin{timeseries_i,2}(electrode_i);
+                current_name = varargin{timeseries_i}(electrode_i);
                 current_electrode_combination_name = strcat(current_electrode_combination_name,"_",current_name);
             end
-            selected_timeseries(timeseries_i,:) = PCA(dataset(electrode_indices,:),1);
-            selected_names(timeseries_i) = current_electrode_combination_name;
+            selected_timeseries(timeseries_i-1,:) = PCA(dataset(electrode_indices,:),1);
+            selected_names(timeseries_i-1) = current_electrode_combination_name;
         else
-            disp("we got somewhere else");
+            %find electrode index
+            current_index = Find_Index_Of_Electrode(varargin{timeseries_i},electrode_list);
+            disp(current_index);
+            %extract data
+            selected_timeseries(timeseries_i-1,:) = dataset(current_index,:);
+            selected_names(timeseries_i-1) = varargin{timeseries_i};
         end
     end
-   
-    %%%
-    %TODO: FIND OUT ERROR IN THE IF LOOP (index exceeds array bounds)
-    %%%
-    
-%     for timeseries_i = 1:electrode_amount
-%         if(size(varargin{2*timeseries_i},2) ~= 1) %the current region is built from multiple regions in the atlas
-%             selected_timeseries(timeseries_i,:) = PCA(varargin{1}(varargin{2*timeseries_i},:),1); %First PCA of the selected timeseries
-%             selected_names(timeseries_i) = varargin{2*timeseries_i + 1}; %name that has been given as the argument
-%         else
-%             selected_timeseries(timeseries_i,:) = varargin{1}(varargin{2*timeseries_i},:); %selected timeseries
-%             if(varargin{2*timeseries_i + 1} == "") %check if no name is given
-%                 selected_names(timeseries_i) = {table2cell(brainregion_list(varargin{2*timeseries_i},1))}; %long chain of indexing to obtain the string value itself, not a table element.
-%             else
-%                 selected_names(timeseries_i) = varargin{2*timeseries_i + 1}; %name that has been given as the argument
-%             end
-%         end
-%     end
-%     selected_names = selected_names.'; %transpose for easier use
 end
