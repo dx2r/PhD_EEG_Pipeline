@@ -77,10 +77,11 @@ clear all; %clear workspace
         %
         % If the analyses need to be run for specific electrodes, use the following as code:
         %   electrode_amount = 4;
-        %   electrode_names = ["Fz",...
-        %                      "F3",...
-        %                      "F4",...
-        %                      "F8"];
+        %   electrode_names = {["Fpz","Oz","P4"],...
+        %                       "Fp1",...
+        %                       "Fp2",...
+        %                       "F4",...
+        %                       "F5"};
         %   electrode_layout_information = 'path\to\matfile\with\electrode_layout.mat';
         %
         % If the analyses need to be run for all electrodes, use the following as code:
@@ -90,7 +91,7 @@ clear all; %clear workspace
         
         electrode_layout_information = 'C:\Users\Gert\OneDrive - UGent\Study - EEGSTRESS\Dataset - Feedback Moments\Feedback_Electrode_Layout.mat';
         electrode_amount = 0;
-        electrode_names = [""];
+        electrode_names = {};
             
     %%%
     % EPOCH INFORMATION
@@ -98,6 +99,7 @@ clear all; %clear workspace
         
         %define the length of the epochs for which you want the calculations to be done (in seconds)
         % example: epoch_length = 3;
+        % example: epoch_length = 6.197265625;
         epoch_length = 3; 
 
     %%%
@@ -117,6 +119,7 @@ clear all; %clear workspace
         % possibilities:
         %   "average_relative_power_all" -> get average relative power from the delta, theta, alpha and beta frequency range  
         %   "average_relative_power_specific" -> get average relative power from specific frequency range
+        %   "average_absolute_power_specific" -> get average absolute power from specific frequency range
         
         analysis_choice_power = "";  
         
@@ -124,6 +127,8 @@ clear all; %clear workspace
         % for "average_relative_power_all": {bin_width, delta_frequency_range, theta_frequency_range, alpha_frequency_range, beta_frequency_range}
         %   pow_varargin = {0.5, [0.5 4], [4 8], [8 13], [13 30]};
         % for "average_relative_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
+        %   pow_varargin = {0.5, [8 13], [0.5 40]};
+        % for "average_absolute_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
         %   pow_varargin = {0.5, [8 13], [0.5 40]};
 
         pow_varargin = {};
@@ -215,8 +220,8 @@ if(run_analysis_power == 1)
             current_participant_datafile = Extract_Timeseries_From_Sensor_Structure(dataset_files(participant_i));                    
             %build the complete argument list to be able to extract the specific timeseries
             current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
-                                                                    electrode_amount,...
-                                                                    electrode_names);
+                                                               electrode_amount,...
+                                                               electrode_names);
             %extract only the specific timeseries on which the calculations need to be performed on
             [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
                                                                                                                              electrode_layout_information);
