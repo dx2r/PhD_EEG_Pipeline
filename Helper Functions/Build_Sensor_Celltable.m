@@ -18,10 +18,9 @@ function [celltable] = Build_Sensor_Celltable(data, sensor_amount, sensor_names)
 %%%
 % Step 1: Check if whole brain analysis is selected
 if(sensor_amount == -1 || strcmp(sensor_names(1),'All_Electrodes'))
-    celltable = cell(1, 3);
+    celltable = cell(1, 2);
     celltable(1,1) = {data};
-    celltable(1,2) = {-1};
-    celltable(1,3) = {"All_Electrodes"};
+    celltable(1,2) = {"All_Electrodes"};
 else
     celltable = cell(1, 1 + sensor_amount);
     %Fill in the information
