@@ -17,6 +17,13 @@ function [timeseries] = Extract_Timeseries_From_Sensor_Structure(path_to_structu
 disp("Obtaining Time Series...");
 %Step 1: Load the mat object
 participant_structure = load(path_to_structure);
-structure_fieldname = fieldnames(participant_structure); %get the field name of the mat object
-timeseries = getfield(participant_structure, structure_fieldname{1,1}); %Get the field with the variable name
+%check if the variable is a structure, and not a double
+if(isequal(class(participant_structure),'struct'))
+    structure_fieldname = fieldnames(participant_structure); %get the field name of the mat object
+    timeseries = getfield(participant_structure, structure_fieldname{1,1}); %Get the field with the variable name
+    timeseries = timeseries.Value; %Obtain the Value field (always the same for Brainstorm structures
+elseif(isequal(class(participant_structure),'double'))
+    timeseries = participant_structure; %"structure" is already in the correct form
+else
+    error('Function: Extract_Timeseries_From_Sensor_Structure.m Reason: data object is neither a structure or double');
 end
