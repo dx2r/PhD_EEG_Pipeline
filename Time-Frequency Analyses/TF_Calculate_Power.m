@@ -56,8 +56,31 @@ if(strcmp(power_measure, "average_relative_power_specific"))
     disp("Calculation Done...");
 end
 
+%%%
+% AVERAGE ABSOLUTE POWER SPECIFIC FREQUENCY BAND
+%%%
 
+if(strcmp(power_measure, "average_absolute_power_specific"))
+   %tell what is going on
+   disp("Average absolute power for specific frequency range is selected...");
+   %collect the varargin argument
+   additional_info = varargin{1};
+   power_values = TF_Average_Absolute_Power_Specific_Frequencyband(data, sample_freq, epoch_length, additional_info{1}, additional_info{2}, additional_info{3});
+   disp("Calculation Done...");    
+end
 
+%%%
+% AVERAGE LOG TRANSFORMED ABSOLUTE POWER SPECIFIC FREQUENCY BAND
+%%%
+
+if(strcmp(power_measure, "average_log_absolute_power_specific"))
+    %tell what is going on
+    disp("Average log transformed absolute power for specific frequency range is selected...");
+    %collect the varargin argument
+    additional_info = varargin{1};
+    power_values = TF_Average_Log_Absolute_Power_Specific_Frequencyband(data, sample_freq, epoch_length, additional_info{1}, additional_info{2}, additional_info{3});
+    disp("Calculation Done...");
+end
 
 
 

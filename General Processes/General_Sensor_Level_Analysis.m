@@ -1,13 +1,13 @@
 %%%
 %
-% General Script that is used to perform Source Level Analyses.
+% General Script that is used to perform Sensor Level Analyses.
 % This is the script in which all variables are defined that will be needed for the further analysis. 
-% Only this file should be used for source level analysis. All other functions are wrapped in this script.
+% Only this file should be used for sensor level analysis. All other functions are wrapped in this script.
 %
 % NOTE: only one analysis can be done at a time. This is done so each analysis has its own unique analysis file for publication on osf.
 % NOTE: Step 8 contains an auditory cue to let you know if a participant has finished, you can delete this.
 %
-% Gert Vanhollebeke (02/12/2021 - )
+% Gert Vanhollebeke (28/07/2022 - )
 %
 %%%
 
@@ -65,43 +65,41 @@ clear all; %clear workspace
         theta_frequency_range = []; % frequency range for the theta frequency band (Hz)
         alpha_frequency_range = []; % frequency range for the alpha frequency band (Hz)
         beta_frequency_range = []; % frequency range for the beta frequency band (Hz)
-
+    
     %%%
-    % BRAIN REGIONS
+    % ELECTRODES
     %%%
     
-        % selection of the brain regions for which the analysis should be conducted
-        % For more information on which brain regions are available and which indices these have, use the function "Check_Brainregions"
-        % You can write "Check_Brainregions" in the command window to see all regions
-        % This way of working is not efficient, but is done to make sure that the correct brain regions are selected, 
-        % so a name (not mandatory) AND a brainregion index should be given.
+        % selection of the electrodes for which the analysis should be conducted
+        % For more information on which electrodes are available, check the electrode layout file which should be linked below
+        % You can write "Check_Electrode_Layout" in the command window to see all electrodes in the current configuration
+        % This way of working is not efficient, but is done to make sure that the correct electrodes are selected
         %
-        % If the analysis needs to be run for specific brain regions, use the following example:
-        %   brainregion_amount = 4;
-        %   brainregion_indices = {1, ...
-        %                          2, ...
-        %                          [5 13 18],...
-        %                          16};
-        %   brainregion_names = ["",...
-        %                        "Region_name_I_want",...
-        %                        "Always_give_names_when_you_want_to_combine_multiple_regions",...
-        %                        "",...];
+        % If the analyses need to be run for specific electrodes, use the following as code:
+        %   electrode_amount = 4;
+        %   electrode_names = {["Fpz","Oz","P4"],...
+        %                       "Fp1",...
+        %                       "Fp2",...
+        %                       "F4",...
+        %                       "F5"};
+        %   electrode_layout_information = 'path\to\matfile\with\electrode_layout.mat';
         %
-        % If the analysis needs to be run for the whole brain, use the following as code:
-        %   brainregion_amount = 1; %ALWAYS 1!!!
-        %   brainregion_indices = {-1};
-        %   brainregion_names = ["Whole_Brain"]; %always use underscores when combining multiple words!
-
-        brainregion_amount = 1;
-        brainregion_indices = {};
-        brainregion_names = [];
+        % If the analyses need to be run for all electrodes, use the following as code:
+        %   electrode_amount = -1;
+        %   electrode_names = ["All_Electrodes"]; %Always use underscore when combining multiple words!
+        %   electrode_layout_information = 'path\to\matfile\with\electrode_layout.mat';
         
+        electrode_layout_information = 'C:\Users\Gert\OneDrive - UGent\Study - EEGSTRESS\Dataset - Feedback Moments\Feedback_Electrode_Layout.mat';
+        electrode_amount = 0;
+        electrode_names = {};
+            
     %%%
     % EPOCH INFORMATION
     %%%
         
         %define the length of the epochs for which you want the calculations to be done (in seconds)
         % example: epoch_length = 3;
+        % example: epoch_length = 6.197265625;
         epoch_length = 3; 
 
     %%%
@@ -122,6 +120,7 @@ clear all; %clear workspace
         %   "average_relative_power_all" -> get average relative power from the delta, theta, alpha and beta frequency range  
         %   "average_relative_power_specific" -> get average relative power from specific frequency range
         %   "average_absolute_power_specific" -> get average absolute power from specific frequency range
+        %   "average_log_absolute_power_specific" -> get log transformed version of average absolute power from specific frequency range
         
         analysis_choice_power = "";  
         
@@ -131,6 +130,8 @@ clear all; %clear workspace
         % for "average_relative_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
         %   pow_varargin = {0.5, [8 13], [0.5 40]};
         % for "average_absolute_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
+        %   pow_varargin = {0.5, [8 13], [0.5 40]};
+        % for "average_log_absolute_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
         %   pow_varargin = {0.5, [8 13], [0.5 40]};
 
         pow_varargin = {};
@@ -146,7 +147,7 @@ clear all; %clear workspace
         % for "amplitude_envelope_correlation": {freq_range}
         %   fc_varargin = {[13 20]}
         
-        fc_varargin = {};
+        fc_varargin = [];
         
         %DYNAMIC FUNCTIONAL CONNECTIVITY ANALYSIS
         
@@ -219,14 +220,14 @@ if(run_analysis_power == 1)
             %Tell what is going on (which participant is worked on)
             disp(current_participant_name);
             %load the timeseries of the current participant
-            current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));                    
+            current_participant_datafile = Extract_Timeseries_From_Sensor_Structure(dataset_files(participant_i));                    
             %build the complete argument list to be able to extract the specific timeseries
-            current_participant_table = Build_Brainregion_Celltable(current_participant_datafile,...
-                                                                    brainregion_amount,...
-                                                                    brainregion_indices,...
-                                                                    brainregion_names);
+            current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
+                                                               electrode_amount,...
+                                                               electrode_names);
             %extract only the specific timeseries on which the calculations need to be performed on
-            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
+                                                                                                                             electrode_layout_information);
             %run the power analysis
             current_participant_values = TF_Calculate_Power(current_participant_region_timeseries,...
                                                                                         sample_frequency,...

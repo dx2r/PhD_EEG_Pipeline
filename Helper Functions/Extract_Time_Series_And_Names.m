@@ -3,7 +3,7 @@ function [selected_timeseries, selected_names] = Extract_Time_Series_And_Names(v
 %%%
 %
 % Function which extracts the necessary timeseries out of the whole data. Returns those timeseries and their names.
-% If a region is defined by multiple atlas-regions, the function aggragates the timeseries into a single one by taking the mean of the timeseries.
+% If a region is defined by multiple atlas-regions, the function aggragates the timeseries into a single one by taking the first principal component of the timeseries.
 %
 % Gert Vanhollebeke (02/12/2021 - 02/12/2021)
 %
