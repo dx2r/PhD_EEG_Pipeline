@@ -121,6 +121,7 @@ clear all; %clear workspace
         % possibilities:
         %   "average_relative_power_all" -> get average relative power from the delta, theta, alpha and beta frequency range  
         %   "average_relative_power_specific" -> get average relative power from specific frequency range
+        %   "average_absolute_power_specific" -> get average absolute power from specific frequency range
         
         analysis_choice_power = "";  
         
@@ -128,6 +129,8 @@ clear all; %clear workspace
         % for "average_relative_power_all": {bin_width, delta_frequency_range, theta_frequency_range, alpha_frequency_range, beta_frequency_range}
         %   pow_varargin = {0.5, [0.5 4], [4 8], [8 13], [13 30]};
         % for "average_relative_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
+        %   pow_varargin = {0.5, [8 13], [0.5 40]};
+        % for "average_absolute_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
         %   pow_varargin = {0.5, [8 13], [0.5 40]};
 
         pow_varargin = {};
