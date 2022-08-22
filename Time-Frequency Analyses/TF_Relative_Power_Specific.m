@@ -12,7 +12,7 @@ function [power_values] = TF_Relative_Power_Specific(data, sample_freq, bin_widt
 %   freq_range_whole: 1*2 integer indicating the lower and upper bound of the frequency range in which the signal is assumed
 %
 % OUTPUT:
-%   power_values = 4*N double indicating the relative power value of each frequency band, for each time series 
+%   power_values = 1*N double indicating the relative power values throughout time of the specific frequency band throughout time, for each time series 
 %
 % EXAMPLE: 
 %   [power_values] = TF_Relative_Power_Specific(data, 512, 0.5, [0.5 4], [4 8], [13 17], [0.5 40]);

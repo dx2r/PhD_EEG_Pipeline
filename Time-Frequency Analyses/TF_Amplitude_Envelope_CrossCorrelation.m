@@ -1,4 +1,4 @@
-function [corr_value_ratio, max_corr_lag] = TF_Amplitude_Envelope_CrossCorrelation(data, sample_freq, freq_range, max_delay)
+function [max_corr_value, max_corr_lag] = TF_Amplitude_Envelope_CrossCorrelation(data, sample_freq, freq_range, max_delay)
 
 %%%
 %
@@ -16,7 +16,7 @@ function [corr_value_ratio, max_corr_lag] = TF_Amplitude_Envelope_CrossCorrelati
 %   max_delay: double indicating the maximum delay (seconds) in which cross-correlation should be computed
 % 
 % OUTPUT:
-%   corr_value_ratio: double indicating the ratio between the maximum correlation value and the zero lag correlation value (unitless, [1,+infinite]
+%   max_corr_value: double indicating the maximum correlation value
 %   max_corr_lag: double indicating the lag for where the maximum correlation value has been found (unit: milliseconds)
 %
 %%%
@@ -29,22 +29,24 @@ data_bandpass = bandpass(data, freq_range, sample_freq);
 data_hilbert = hilbert(data_bandpass);
 %Step : Obtain envelopes
 data_envelope = abs(data_hilbert);
-disp(size(data_envelope));
+%Step : subtract mean amplitude from the signals, since it is of no importance in the crosscorrelation
+data_envelope_mean = mean(data_envelope);
+data_envelope = data_envelope - data_envelope_mean;
+
 %Step : compute cross-correlation
-%compute how many timepoints should be used for the shifting
-shift_amount = sample_freq*max_delay;
+%compute how many timepoints should be used for the shifting (rounding used to an integer is always obtained)
+shift_amount = round(sample_freq*max_delay);
 [xcorr_values, xcorr_lags] = xcorr(data_envelope(:,1),data_envelope(:,2), shift_amount, 'coeff'); %compute crosscorrelation
 %find the index of the "zero-lag" correlation
 zero_lag_index = find(xcorr_lags == 0);
 %get value of the zero lag correlation
 zero_lag_corr_value = xcorr_values(zero_lag_index,1);
+%set zero lag correlation to zero (not interesting due to volume conduction)
+xcorr_values(zero_lag_index,1) = 0;
 %find maximum correlation value
 max_corr_value = max(xcorr_values);
 %find index of maximum correlation value
 max_corr_index = find(xcorr_values == max_corr_value);
 %find lag for maximum correlation value and convert to milliseconds
 max_corr_lag = (xcorr_lags(1,max_corr_index)/sample_freq)*1000;
-%compute ratio between zero lag correlation value and maximum correlation value
-corr_value_ratio = max_corr_value/zero_lag_corr_value;
-disp(corr_value_ratio);
 end
