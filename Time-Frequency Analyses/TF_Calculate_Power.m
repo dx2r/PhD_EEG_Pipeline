@@ -82,9 +82,18 @@ if(strcmp(power_measure, "average_log_absolute_power_specific"))
     disp("Calculation Done...");
 end
 
+%%%
+% AVERAGE RELATIVE POWER SPECIFIC FREQUENCY BAND CORRECTED FOR 1/F NOISE
+%%%
 
-
-
+if(strcmp(power_measure, "average_relative_power_specific_fcorrected"))
+    %tell what is going on
+    disp("Average relative power for specific frequency range with 1/f correction...");
+    %collect the varargin argument
+    additional_info = varargin{1};
+    power_values = TF_Average_Relative_Power_Specific_Frequencyband_FCorrected(data, sample_freq, epoch_length, additional_info{1}, additional_info{2}, additional_info{3}, additional_info{4});
+    disp("Calculation Done...");
+end
 
 
 
