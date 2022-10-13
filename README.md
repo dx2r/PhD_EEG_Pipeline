@@ -1,2 +1,3 @@
-# PhD_EEG_Pipeline
+# MATLAB EEG Pipeline
+
  Code for the MATLAB-Based EEG Pipeline
