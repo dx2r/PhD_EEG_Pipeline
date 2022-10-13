@@ -4,6 +4,10 @@ function [selected_timeseries, selected_names] = Extract_Time_Series_And_Names(v
 %
 % Function which extracts the necessary timeseries out of the whole data. Returns those timeseries and their names.
 % If a region is defined by multiple atlas-regions, the function aggragates the timeseries into a single one by taking the first principal component of the timeseries.
+% 
+% This Function uses the PCA function created by Brian Moore. 
+%   Brian Moore (2022). PCA and ICA Package 
+%   https://www.mathworks.com/matlabcentral/fileexchange/38300-pca-and-ica-package), MATLAB Central File Exchange. Retrieved December 02, 2021.
 %
 % Gert Vanhollebeke (02/12/2021 - 02/12/2021)
 %
