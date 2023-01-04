@@ -95,9 +95,19 @@ if(strcmp(power_measure, "average_relative_power_specific_fcorrected"))
     disp("Calculation Done...");
 end
 
+%%%
+% COMBINED AVERAGE RELATIVE POWER FOR MULTIPLE ARTICLES, SPECIFIC FREQUENCYBAND? 1/F NOISE CORRECTION
+%%%
 
-
-
+if(strcmp(power_measure, "combined_relative_power_specific_fcorrected"))
+    %tell what is going on
+    disp("The combined mean power for specific frequency range with 1/f correction...");
+    %collect the varargin argument
+    additional_info = varargin{1};
+    power_values = TF_Average_Relative_Power_Specific_Frequencyband_FCorrected(data, sample_freq, epoch_length, additional_info{1}, additional_info{2}, additional_info{3}, additional_info{4});
+    power_values = mean(power_values); %compute mean
+    disp("Calculation Done...");
+end
 
 
 
