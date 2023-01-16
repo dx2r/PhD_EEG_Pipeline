@@ -17,7 +17,11 @@ function [timeseries] = Extract_Timeseries_From_Structure(path_to_structure)
 disp("Obtaining Time Series...");
 %Step 1: Load the mat object
 participant_structure = load(path_to_structure);
-structure_fieldname = fieldnames(participant_structure); %get the field name of the mat object
-timeseries = getfield(participant_structure, structure_fieldname{1,1}); %Get the field with the variable name
-timeseries = timeseries.Value; %Obtain the Value field (always the same for Brainstorm structures
+%check the size of the structure, if not (1, 1), keep extracting from the structure until the 2d array is found
+while(size(participant_structure,1) == 1 && size(participant_structure,2) == 1)
+    structure_fieldnames = fieldnames(participant_structure);
+    participant_structure = getfield(participant_structure, structure_fieldnames{1,1});
+end
+%return the timeseries object
+timeseries = participant_structure;
 end
