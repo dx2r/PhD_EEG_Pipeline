@@ -2,7 +2,7 @@ function [timeseries] = Extract_Timeseries_From_Structure(path_to_structure)
 
 %%%
 % 
-% Function that returns the timeseries from a brainstorm .mat object (source level analysis)
+% Function that returns the timeseries from a .mat object (sensor and source level analysis)
 % 
 % Gert Vanhollebeke (02/12/2021 - 02/12/2021)
 %
@@ -19,5 +19,4 @@ disp("Obtaining Time Series...");
 participant_structure = load(path_to_structure);
 structure_fieldname = fieldnames(participant_structure); %get the field name of the mat object
 timeseries = getfield(participant_structure, structure_fieldname{1,1}); %Get the field with the variable name
-timeseries = timeseries.Value; %Obtain the Value field (always the same for Brainstorm structures
 end
