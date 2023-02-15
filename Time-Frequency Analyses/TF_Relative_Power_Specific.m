@@ -25,6 +25,9 @@ function [power_values] = TF_Relative_Power_Specific(data, sample_freq, bin_widt
 [timeseries_amount, timepoints_amount] = size(data);
 %Step 1: calculate the power spectral density of each time series
 [psd_values, freq_values] = pwelch(data.', [], [], freq_range_whole(1):bin_width:freq_range_whole(2), sample_freq); %transpose data for further usage of functions 
+if timeseries_amount == 1 % if only one electrode/region then transpose result from pwelch
+    psd_values = psd_values.';
+end
 %Step 2: calculate power values
 total_pow = sum(psd_values); %total power
 specific_pow = sum(psd_values(freq_range_interest(1)/bin_width:freq_range_interest(2)/bin_width,:))./total_pow; %specific relative power

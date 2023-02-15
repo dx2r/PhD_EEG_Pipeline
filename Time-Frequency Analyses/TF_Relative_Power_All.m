@@ -27,6 +27,9 @@ function [power_values] = TF_Relative_Power_All(data, sample_freq, bin_width, de
 [timeseries_amount, timepoints_amount] = size(data);
 %Step 1: calculate the power spectral density of each time series
 [psd_values, freq_values] = pwelch(data.', [], [], [bin_width:bin_width:beta_range(2)] , sample_freq); 
+if timeseries_amount == 1 % if only one electrode/region then transpose result from pwelch
+    psd_values = psd_values.';
+end
 %Step 2: calculate the power within each frequency band as well as the total power
 total_pow = sum(psd_values); %total power
 delta_pow = sum(psd_values(delta_range(1)/bin_width:delta_range(2)/bin_width,:))./total_pow;

@@ -27,6 +27,9 @@ function [power_values] = TF_Relative_Power_Specific_FCorrected(data, sample_fre
 [timeseries_amount, timepoints_amount] = size(data);
 %Step 1: calculate the power spectral density of each time series
 [psd_values, freq_values] = pwelch(data.', [], [], freq_range_whole(1):bin_width:freq_range_whole(2), sample_freq); %transpose data for further usage of functions 
+if timeseries_amount == 1 % if only one electrode/region then transpose result from pwelch
+    psd_values = psd_values.';
+end
 %Step 2: correct the psd values for 1/f noise
 psd_values = TF_Frequency_Correction(psd_values, freq_values, gamma);
 %Step 3: calculate power values
