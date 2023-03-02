@@ -29,11 +29,12 @@ function [power_values] = TF_Average_Relative_Power_Specific_Frequencyband_FCorr
 power_values = zeros(1, timeseries_amount);
 %Step 2: calculate for each epoch the corresponding values
 epoch_amount = timepoints_amount/(sample_freq*epoch_length);
+epoch_timepoints = sample_freq*epoch_length;
 disp(epoch_amount);
 disp(strcat("Current participant: ", num2str(epoch_amount), " epochs..."));
 for current_epoch = 1:epoch_amount
     disp(strcat("Epoch ", num2str(current_epoch),"..."));
-    current_data = data(:,(current_epoch - 1) + 1:(current_epoch - 1) + (epoch_length*sample_freq));
+    current_data = data(:,((current_epoch - 1)*epoch_timepoints) + 1:((current_epoch - 1)*epoch_timepoints) + epoch_timepoints);
     current_powers = TF_Relative_Power_Specific_FCorrected(current_data, sample_freq, bin_width, freq_range_interest, freq_range_whole, gamma);    
     power_values = power_values + current_powers;
 end
