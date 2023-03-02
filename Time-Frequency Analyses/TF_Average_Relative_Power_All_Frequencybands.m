@@ -30,10 +30,11 @@ function [power_values] = TF_Average_Relative_Power_All_Frequencybands(data, sam
 power_values = zeros(4, timeseries_amount);
 %Step 2: calculate for each epoch the corresponding values
 epoch_amount = timepoints_amount/(sample_freq*epoch_length);
+epoch_timepoints = sample_freq*epoch_length;
 disp(strcat("Current participant: ", num2str(epoch_amount), " epochs..."));
 for current_epoch = 1:epoch_amount
     disp(strcat("Epoch ", num2str(current_epoch),"..."));
-    current_data = data(:,(current_epoch - 1) + 1:(current_epoch - 1) + (epoch_length*sample_freq));
+    current_data = data(:,((current_epoch - 1)*epoch_timepoints) + 1:((current_epoch - 1)*epoch_timepoints) + (epoch_length*sample_freq));
     current_powers = TF_Relative_Power_All(current_data, sample_freq, bin_width, delta_range, theta_range, alpha_range, beta_range);    
     power_values = power_values + current_powers;
 end
