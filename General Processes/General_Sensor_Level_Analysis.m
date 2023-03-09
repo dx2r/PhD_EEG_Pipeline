@@ -53,6 +53,7 @@ clear all; %clear workspace
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
         graph_results_map_name = '';
+        microstates_results_map_name = '';
         
     %%%
     % FREQUENCY RANGES
@@ -177,7 +178,12 @@ clear all; %clear workspace
         % TODO HERE
         
         graph_varargin = {0};
-        
+
+        %MICROSTATES ANALYSIS
+
+        analysis_choice_microstates = "";
+        gr_optimal_k = "";
+
     %%%
     % SELECT WHICH ANALYSIS NEED TO BE RUN
     %%%
@@ -194,6 +200,8 @@ clear all; %clear workspace
         run_analysis_dyncausal = 0;
         %GRAPH ANALYSIS ANALYSIS
         run_analysis_graph = 0;
+        %MICROSTATES ANALYSIS
+        run_analysis_microstates = 0;
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 2: LOAD IN DATASET %
@@ -377,8 +385,51 @@ else
     disp('Graph Analysis not selected...');
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% STEP 8: MICROSTATES ANALYSIS CALCULATIONS %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if(run_analysis_microstates == 1)
+    % SUBSTEP 1: CREATE A RESULTS MAP
+    %%%
+        [Microstates_Results_map] = Create_Directory(location_data_to,microstates_results_map_name);
+    %%%
+    % SUBSTEP 2: MAIN FOR LOOP
+    %%%
+        %first, write the loop for every participant (use parfor for parallel computing)
+        for participant_i = 1:1:dataset_size
+            %get the name of the current participant
+            current_participant_name = dataset_names(participant_i); 
+            %Tell what is going on (which participant is worked on)
+            disp(current_participant_name);
+            %load the timeseries of the current participant
+            current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));
+            %build the complete argument list to be able to extract the specific timeseries
+            current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
+                                                               electrode_amount,...
+                                                               electrode_names);
+            %define the regions which need to be used
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
+                                                                                                                             electrode_layout_information);
+            %run the microstates analysis
+            current_participant_values = Extract_GFP_Peaks_Time_Series(current_participant_region_timeseries, ...
+                                                                                          sample_frequency,...
+                                                                                          epoch_length);
+%             %run the functional connectivity analysis
+%             current_participant_values = TF_Calculate_Functional_Connectivity(current_participant_region_timeseries,...
+%                                                                                         sample_frequency,...
+%                                                                                         epoch_length,...
+%                                                                                         analysis_choice_fc,...
+%                                                                                         fc_varargin);
+%             %save the results in the previously defined map
+%             Save_Results_To_Directory(current_participant_values,current_participant_name,FC_Results_map);
+        end
+else
+    disp('Microstates Analysis not selected...');
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%
-% STEP 8: NOTIFICATION %
+% STEP 9: NOTIFICATION %
 %%%%%%%%%%%%%%%%%%%%%%%%
 
     %play a sound when the program is finished
