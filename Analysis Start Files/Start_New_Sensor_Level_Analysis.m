@@ -14,13 +14,13 @@
     % example:
     %   new_analysis_name = "AEC - Beta3-ACC-PCC.m";
     
-    new_analysis_name = "sensortestingrun.m";
+    new_analysis_name = "sensortestingmicrostates.m";
     
     %give a location to where the new analysis file should be saved
     % example:
     %   new_analysis_location = "C:\Users\Gert\OneDrive - UGent\Study - EEGRUM\Analyses";
     
-    new_analysis_location = "C:\Users\Gert\OneDrive - UGent\Documenten\GitHub\PhD_EEG_Pipeline\Testing";
+    new_analysis_location = "D:\UGent\Burgie\Jaar 4\Thesis\GitHub\PhD_EEG_Pipeline";
 
 %%%
 % DO NOT ADJUST UNLESS A FIRST INSTALL OF THE FILES IS DONE
@@ -36,7 +36,7 @@
     % example:
     %   original_analysis_location = "C:\Users\Gert\OneDrive - UGent\Documenten\GitHub\PhD_EEG_Pipeline\General Processes";
     
-    original_analysis_location = "C:\Users\Gert\OneDrive - UGent\Documenten\GitHub\PhD_EEG_Pipeline\General Processes";
+    original_analysis_location = "D:\UGent\Burgie\Jaar 4\Thesis\GitHub\PhD_EEG_Pipeline\General Processes";
 
 %%%
 % RUN THE NECESSARY CODE
