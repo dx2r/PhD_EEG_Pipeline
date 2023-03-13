@@ -14,7 +14,7 @@
     % example:
     %   new_analysis_name = "AEC - Beta3-ACC-PCC.m";
     
-    new_analysis_name = "sensortestingmicrostates.m";
+    new_analysis_name = "microstates.m";
     
     %give a location to where the new analysis file should be saved
     % example:
