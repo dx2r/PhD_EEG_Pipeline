@@ -1,4 +1,4 @@
-function [microstates, variance_explained] = Calculate_Global_Explained_Variance(data, GFP)
+function [gev_tot, gev_k] = Calculate_Global_Explained_Variance(data, microstates, labels)
 
 %%%
 % [1] M. M. Micah, M. De Lucia, D. Brunet, and C. M. Michel, ‘Principles of Topographic Analyses for Electrical Neuroimaging’, 
@@ -17,5 +17,16 @@ function [microstates, variance_explained] = Calculate_Global_Explained_Variance
 %
 %%%
 
+K = size(microstates,2);
+gfp = Calculate_Sensor_Global_Field_Power(data);
+segmentation = microstates(:,labels);
+gev_k = zeros(1,K);
+
+for k = 1:K
+    idx_k = labels==k;
+    spatial_correlation_k = Calculate_Spatial_Correlation(data(:,idx_k), segmentation(:,idx_k));
+    gev_k(k) = sum((gfp(idx_k) .* spatial_correlation_k).^2) / sum(gfp.^2);
+
+gev_tot = sum(gev_k);
 
 end
