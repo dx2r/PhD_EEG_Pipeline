@@ -1,4 +1,4 @@
-function [microstates, variance_explained] = Repetitions_Modified_K_Means(data, K, n_repetitions, max_iter)
+function [microstates, labels, global_explained_variance] = Repetitions_Modified_K_Means(data, K, n_repetitions, max_iter)
 
 %%%
 % Function that ...
@@ -13,17 +13,15 @@ function [microstates, variance_explained] = Repetitions_Modified_K_Means(data, 
 %
 %%%
 
-variance_explained = 0;
+global_explained_variance = 0;
 
 for i = 1:n_repetitions
-    [microstates_new, variance_explained_new] = Modified_K_Means(data, K, max_iter);
-    disp(i);
-    disp(variance_explained_new);
-    if variance_explained_new > variance_explained
-        variance_explained = variance_explained_new;
+    [microstates_new, labels_new, new_global_explained_variance] = Modified_K_Means(data, K, max_iter);
+    if new_global_explained_variance > global_explained_variance
+        global_explained_variance = new_global_explained_variance;
         microstates = microstates_new;
+        labels = labels_new;
         %MSE = MSE_new;
     end
 end
-disp(variance_explained);
 end

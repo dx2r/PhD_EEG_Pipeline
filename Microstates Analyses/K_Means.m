@@ -13,6 +13,6 @@ function microstates = K_Means(data, K, max_iter)
 %
 %%%
 
-[~, microstates] = kmeans(transpose(data), K, display='iter', MaxIter=max_iter);
+[~, microstates] = kmeans(data', K, MaxIter=max_iter);
 microstates = microstates';
 end

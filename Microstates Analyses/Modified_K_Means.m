@@ -1,4 +1,4 @@
-function [microstates, variance_explained] = Modified_K_Means(data, K, max_iter)
+function [microstates, labels, global_explained_variance] = Modified_K_Means(data, K, max_iter)
 
 %%%
 % Function that ...
@@ -22,12 +22,13 @@ initial_map_indices = randperm(samples, K);
 microstates = data(:, initial_map_indices);
 microstates = microstates ./ vecnorm(microstates, 2, 1); % normalize
 
-%iter = 0;
-variance_microstates = 0;
+%variance_microstates = 0;
 convergence_criterium = 1e-6;
+global_explained_variance = 0;
 
 for iter = 1:max_iter
-    old_variance_microstates = variance_microstates;
+    %old_variance_microstates = variance_microstates;
+    old_global_explained_variance = global_explained_variance;
     activations = (microstates' * data);
     [~, labels] = max(activations.^2); 
     for k = 1:K
@@ -38,14 +39,17 @@ for iter = 1:max_iter
         microstates(:, k) = eigenvectors(:,idx_max_eigenvalue);
         microstates(:, k) = microstates(:, k) ./ vecnorm(microstates(:, k), 2, 1);
     end
-    variance_microstates = (squared_sum_data - sum(sum(microstates(:,labels).*data).^2)) / (samples * (channels - 1));
-    if abs(variance_microstates - old_variance_microstates) <= convergence_criterium * variance_microstates
-        disp(iter);
+
+    global_explained_variance = Calculate_Global_Explained_Variance(data, microstates, labels);
+    %variance_microstates = (squared_sum_data - sum(sum(microstates(:,labels).*data).^2)) / (samples * (channels - 1));
+    %if abs(variance_microstates - old_variance_microstates) <= convergence_criterium * variance_microstates
+    if abs(global_explained_variance - old_global_explained_variance) <= convergence_criterium * global_explained_variance
+        steps = iter;
         break
     end
 end
 
-variance_explained = 1 - variance_microstates/variance_data;
+%variance_explained = 1 - variance_microstates/variance_data;
 activations_all_states = (microstates' * data);
 
 [~, labels] = max(activations_all_states.^2);
