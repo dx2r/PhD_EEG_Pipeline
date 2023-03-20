@@ -18,7 +18,6 @@ freq_of_occurrence = zeros(1,K);
 seconds_amount = timepoints_amount ./ sample_freq;
 
 for k = 1:K
-
     freq_of_occurrence(k) = sum((labels == k)) ./ seconds_amount;
 end
 
