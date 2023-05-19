@@ -1,4 +1,4 @@
-function [gfp_peaks] = Find_Global_Field_Power_Peaks(gfp_values)
+function [gfp_peaks_indices] = Find_Global_Field_Power_Peaks(gfp_values)
 
 %%%
 % Function that ...
@@ -12,5 +12,7 @@ function [gfp_peaks] = Find_Global_Field_Power_Peaks(gfp_values)
 %   
 %
 %%%
-[~, gfp_peaks] = findpeaks(gfp_values); % peak locations
+[gfp_peaks, gfp_peaks_indices] = findpeaks(gfp_values); % peak locations
+%gfp_peaks_indices = gfp_peaks_indices(gfp_peaks > 0.4e-10);
+
 end

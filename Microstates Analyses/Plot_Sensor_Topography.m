@@ -1,4 +1,4 @@
-function [] = Plot_Sensor_Topography(data_timepoint, channel_information)
+function [] = Plot_Sensor_Topography(data_timepoint, channel_information, plot_layout)
 
 %%%
 % Function that ...
@@ -23,16 +23,28 @@ y_interpolated = linspace(min(y_channel), max(y_channel), 1000);
 potential = griddata(x_channel, y_channel, data_timepoint, x_grid, y_grid, 'cubic');
 figure;
 contourf(x_grid, y_grid, potential, 100, LineColor='None');
-hold on;
-scatter(x_channel,y_channel, 20, 'k','filled');
-text(x_channel, y_channel, names, FontSize=6, HorizontalAlignment='center', VerticalAlignment='bottom');
-hold on;
-for i = 1:length(headshape)
-    plot(headshape{1,i}(:,1), headshape{1,i}(:,2), 'k');
-    hold on
+%colorbar;
+%surf(x_grid, y_grid, potential, EdgeColor='None');
+
+if plot_layout
+    hold on;
+    scatter(x_channel,y_channel, 20, 'r','filled');
+    %scatter(x_channel,y_channel, 10, 'k','filled');
+    text(x_channel, y_channel+0.005, names, FontSize=6, HorizontalAlignment='center', VerticalAlignment='bottom', FontWeight='bold');
+    hold on;
+    for i = 1:length(headshape)
+        plot(headshape{1,i}(:,1), headshape{1,i}(:,2), 'k');
+        hold on
+    end
 end
 axis square
+axis off
 cmap = Build_Red_Blue_Colormap();
 colormap(cmap);
+%set(gcf, 'color', 'none');    
+%set(gca, 'color', 'none');
+%exportgraphics(gcf,'transparent.eps',...   % since R2020a
+%    'ContentType','vector')%,...
+    %'BackgroundColor','none')
 
 end

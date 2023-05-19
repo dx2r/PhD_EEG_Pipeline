@@ -1,4 +1,4 @@
-function [electrode_layout] = Check_Electrode_Layout(path_to_electrode_file)
+function [electrode_layout] = Check_Electrode_Layout(path_to_electrode_file, varargin)
 
 %%%
 % 
@@ -22,8 +22,12 @@ electrode_file = getfield(electrode_file, structure_fieldname{1,1}); %Get the fi
 if(size2 > size1)
     electrode_file = electrode_file.'; %transpose
 end
-disp("The available electrodes are: ");
-disp(electrode_file);
+
+if nargin > 1
+    disp("The available electrodes are: ");
+    disp(electrode_file);
+end
+
 electrode_layout = table(electrode_file);
 electrode_layout.Properties.VariableNames = {'Available_Electrodes'};
 

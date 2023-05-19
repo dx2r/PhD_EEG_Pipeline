@@ -115,6 +115,12 @@ clear all; %clear workspace
         sample_frequency = 200;
 
     %%%
+    % PARTICIPANT INFORMATION
+    %%%
+
+        patient_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\Trait_Questionnaires.xlsx";
+
+    %%%
     % ANALYSIS INFORMATION
     %%%
         

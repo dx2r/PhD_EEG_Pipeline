@@ -1,4 +1,4 @@
-function [microstates, microstate_label_timeseries, gev_tot, gev_k] = Microstates_Individual(data, sample_frequency, epoch_length, K, clustering_method, varargin)
+function [microstates, microstate_label_timeseries, gev_tot, gev_k] = Microstates(data, sample_frequency, epoch_length, K, clustering_method, varargin)
 
 %%%
 % Function that ...

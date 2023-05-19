@@ -27,8 +27,8 @@ epoch_amount = timepoints_amount/epoch_timepoints;
 for current_epoch = 1:epoch_amount
     current_labels = labels((current_epoch - 1)*epoch_timepoints+1:current_epoch*epoch_timepoints);
     [current_encoded_labels, current_encoded_label_lengths] = Run_Length_Encoding(current_labels);
-    encoded_labels = [encoded_labels current_encoded_labels];
-    encoded_label_lengths = [encoded_label_lengths current_encoded_label_lengths];
+    encoded_labels = [encoded_labels 0 current_encoded_labels];
+    encoded_label_lengths = [encoded_label_lengths 0 current_encoded_label_lengths];
 end
 
 end
