@@ -20,9 +20,11 @@ end
 
 % Backfitting
 microstate_label_timeseries = Segmentation(data, microstates, data_type);
-smoothened_microstate_label_timeseries = Temporal_Smoothing(microstates, microstate_label_timeseries, 2, sample_frequency, epoch_length);
-%disp(microstate_label_timeseries(1:100));
-%disp(smoothened_microstate_label_timeseries(1:100));
+%smoothened_microstate_label_timeseries1 = Temporal_Smoothing(microstates, microstate_label_timeseries, 8, sample_frequency, epoch_length);
+smoothened_microstate_label_timeseries = Window_Smoothing_EEGLAB(data, microstate_label_timeseries, microstates);
+disp(microstate_label_timeseries(1:100));
+disp(smoothened_microstate_label_timeseries1(1:100));
+disp(smoothened_microstate_label_timeseries(1:100));
 
 % Calculate GEV
 %[gev_tot, gev_k] = Calculate_Global_Explained_Variance(data, microstates, microstate_label_timeseries);

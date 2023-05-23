@@ -1,4 +1,4 @@
-function [labels, spatial_correlation] = Segmentation(data, microstates, data_type)
+function [labels, spatial_correlation] = Backfitting(data, microstates, data_type)
 
 %%%
 
@@ -15,7 +15,20 @@ for k = 1:microstates_amount
     spatial_correlation(k,:) = Calculate_Spatial_Correlation(data, microstates(:,k), data_type);
 end
 
-[~, labels] = max(abs(spatial_correlation), [], 1);
+[~, labels] = max(abs(spatial_correlation), [], 1); 
+
+%per epoch
+% midpoints_between_peak_indices = zeros(1,length(peak_indices)+1);
+% [peak_maps peak_indices] = Extract_GFP_peaks();
+% midpoints_between_peak_indices(2:end-1) = diff(peak_indices)./2 + peak_indices(1:end-1);
+% midpoints_between_peak_indices(end) = peak_indices(end);
+% 
+% peak_labels = Backfitting(peak_maps, microstates, data_type);
+% 
+% for n = 1:length(peak_indices)
+%     label(midpoints_between_peak_indices(n)+1:midpoints_between_peak_indices(n+1)) = peak_labels(n);
+% end
+
 
 % current_data = data(:,11000:11200);
 % 

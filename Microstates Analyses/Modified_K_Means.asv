@@ -27,8 +27,8 @@ microstates = microstates ./ vecnorm(microstates, 2, 1); % normalize
 %variance_microstates = 0;
 convergence_criterium = 1e-6;
 global_explained_variance = 0;
-%plot_gev = [];
-%plot_iter = [];
+plot_gev = [];
+plot_iter = [];
 
 for iter = 1:max_iter
 
@@ -36,9 +36,9 @@ for iter = 1:max_iter
     activations = (microstates' * data);
     [~, labels] = max(activations.^2); 
 
-    %pgev = Calculate_Global_Explained_Variance(data, microstates, labels, data_type);
-    %plot_gev = [plot_gev pgev];
-    %plot_iter = [plot_iter iter];
+    pgev = Calculate_Global_Explained_Variance(data, microstates, labels, data_type);
+    plot_gev = [plot_gev pgev];
+    plot_iter = [plot_iter iter];
 
     for k = 1:K
         data_microstate_k = data(:, labels==k);
@@ -52,14 +52,14 @@ for iter = 1:max_iter
     global_explained_variance = Calculate_Global_Explained_Variance(data, microstates, labels, data_type);
     
     if abs(global_explained_variance - old_global_explained_variance) <= convergence_criterium * global_explained_variance
-        convergence_iter = iter;
-        disp(strcat("Convergence of modified k-means in ", num2str(convergence_iter), "/", num2str(max_iter), " iterations"));
+        steps = iter;
+        disp("Convergence of modified k-means...")
         break
     end
 end
 
-%save('plotgev2.mat', "plot_gev");
-%save('plotiter2.mat', "plot_iter")
+save('plotgev2.mat', "plot_gev");
+save('plotiter2.mat', "plot_iter")
 
 % Absolute value for source data
 if(strcmp(data_type, "source"))
@@ -78,13 +78,11 @@ end
 %MSE = mean(mean((data - microstates * activations).^2));
 %dispersion = Calculate_Dispersion(data, microstates, labels);
 
-% for k = 1:K
-%     path = 'cluster' + sprintf("%d",k) + '.mat';
-%     idx_k = labels==k;
-%     cluster_k = data(:,idx_k);
-%     idx = randsample(length(cluster_k),100)';
-%     cluster_k = cluster_k(:,idx);
-%     save(path,"cluster_k");
-% end
+for k = 1:K
+    path = 'cluster'
+    idx_k = labels==k;
+    cluster_k = data(:,idx_k);
+    
+end
 
 end

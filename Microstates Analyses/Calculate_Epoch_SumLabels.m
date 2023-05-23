@@ -1,4 +1,4 @@
-function [smoothed_labels] = Temporal_Smoothing(microstates, labels, window, sample_freq, epoch_length)
+function [sum_neighbouring_labels] = Calculate_Epoch_SumLabels(microstates, labels, window_length, sample_freq, epoch_length)
 
 %%%
 % Function that ...
@@ -17,7 +17,7 @@ function [smoothed_labels] = Temporal_Smoothing(microstates, labels, window, sam
 [~, timepoints_amount] = size(labels);
 
 %Step 1: build general object to store the data at the gfp peaks
-smoothed_labels = [];
+sum_neighbouring_labels = [];
 
 %Step 2: calculate for each epoch the corresponding values
 epoch_timepoints = sample_freq*epoch_length;
@@ -25,9 +25,9 @@ epoch_amount = timepoints_amount/epoch_timepoints;
 %disp(strcat("Current participant: ", num2str(epoch_amount), " epochs..."));
 for current_epoch = 1:epoch_amount
     current_labels = labels((current_epoch - 1)*epoch_timepoints+1:current_epoch*epoch_timepoints);
-    current_smoothed_labels = Smoothing_Algorithm(microstates, current_labels, window);
+    current_sum_neighbouring_labels = Calculate_Sum_Labels_Window(microstates, current_labels, window_length);
     %current_smoothed_labels = Smoothing_Algorithm(microstates, current_smoothed_labels, window);
-    smoothed_labels = [smoothed_labels current_smoothed_labels];
+    sum_neighbouring_labels = [sum_neighbouring_labels current_sum_neighbouring_labels];
 end
 
 end

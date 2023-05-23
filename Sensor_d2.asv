@@ -39,9 +39,9 @@ clear all; %clear workspace
         % don't put a backslash at the end of the path
         % example: 'F:\Study - EEGSTRESS\Dataset\EEG Source Data (130 Regios)'
         location_data_from = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\EEG Data (Sensor)\"; %full path to the directory where the data is located.
-        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\FinalResults (Sensor)\"; %full path to the directory where the new data needs to be stored. 
-        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\FinalResults (Sensor)\"; %full path to the directory where the dataset information needs to be stored
-        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\FinalResults (Sensor)\"; %full path to the directory where the statistical .csv file needs to be stored.
+        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\Maybe (Sensor)\"; %full path to the directory where the new data needs to be stored. 
+        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\Maybe (Sensor)\"; %full path to the directory where the dataset information needs to be stored
+        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\Maybe (Sensor)\"; %full path to the directory where the statistical .csv file needs to be stored.
     %%%
     % MAP NAME VARIABLES
     %%%
@@ -53,9 +53,9 @@ clear all; %clear workspace
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
         graph_results_map_name = '';
-        microstates_clusters_map_name = 'Microstates_test';
+        microstates_clusters_map_name = 'Microstates';
         microstates_clusters_file_name = "microstates";
-        microstates_results_map_name = 'Results_test';
+        microstates_results_map_name = 'Statistics_w3_l';
         
     %%%
     % FREQUENCY RANGES
@@ -67,7 +67,7 @@ clear all; %clear workspace
         delta_frequency_range = []; % frequency range for the delta frequency band (Hz)
         theta_frequency_range = []; % frequency range for the theta frequency band (Hz)
         alpha_frequency_range = []; % frequency range for the alpha frequency band (Hz)
-        beta_frequency_range = [25 30]; % frequency range for the beta frequency band (Hz)
+        beta_frequency_range = []; % frequency range for the beta frequency band (Hz)
     
     %%%
     % ELECTRODES
@@ -214,7 +214,7 @@ clear all; %clear workspace
         %GRAPH ANALYSIS ANALYSIS
         run_analysis_graph = 0;
         %MICROSTATES CLUSTERING
-        run_clustering_microstates = 1;
+        run_clustering_microstates = 0;
         %MICROSTATES ANALYSIS
         run_analysis_microstates = 1;
         
@@ -433,10 +433,12 @@ if(run_clustering_microstates == 1)
             %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
             [current_participant_gfp_peaks] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, "sensor");
             all_participants_gfp_peaks = [all_participants_gfp_peaks current_participant_gfp_peaks];
-         
+        
         end
+
         %run the microstates analysis on all participant maps
-        microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "sensor", {5, 300});
+        microstates = Cluster_Microstates(all_participants_gfp_peaks, 6, "modified k-means", "sensor", {5, 300});
+
         %save the results in the previously defined map
         Save_Results_To_Directory(microstates, microstates_clusters_file_name, Microstates_Clusters_map);
 else
@@ -486,12 +488,12 @@ if(run_analysis_microstates == 1)
             %define the regions which need to be used
             [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
                 electrode_layout_information);
-            disp(mean(current_participant_region_timeseries, "all"));
+
             %Plotting(current_participant_region_timeseries, microstates, "sensor", sample_frequency,epoch_length, electrode_locations);
             
             %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
             [current_participant_microstate_labels, current_participant_values] = ...
-                    Microstates_Cohort(current_participant_region_timeseries, microstates, "sensor", sample_frequency, epoch_length);
+                    Microstates_Statistics_Participant(current_participant_region_timeseries, microstates, "sensor", sample_frequency, epoch_length, 3);
 
             current_participant_values = [current_participant_information current_participant_values];
             %save the results in the previously defined map

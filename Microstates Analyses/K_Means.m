@@ -13,7 +13,7 @@ function [microstates, global_explained_variance, labels] = K_Means(data, K, dat
 %
 %%%
 
-[~, microstates] = kmeans(data', K, MaxIter=max_iter);
+[~, microstates] = kmeans(data', K, MaxIter=max_iter, distance="correlation");
 microstates = microstates';
 
 activations_all_states = (microstates' * data);

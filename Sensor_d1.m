@@ -8,6 +8,7 @@
 % NOTE: Step 8 contains an auditory cue to let you know if a participant has finished, you can delete this.
 %
 % Gert Vanhollebeke (28/07/2022 - )
+% Lore Flipts
 %
 %%%
 
@@ -38,9 +39,9 @@ clear all; %clear workspace
         % don't put a backslash at the end of the path
         % example: 'F:\Study - EEGSTRESS\Dataset\EEG Source Data (130 Regios)'
         location_data_from = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\EEG Data (Sensor)\"; %full path to the directory where the data is located.
-        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\FinalResults (Sensor)\"; %full path to the directory where the new data needs to be stored. 
-        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\FinalResults (Sensor)\"; %full path to the directory where the dataset information needs to be stored
-        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\FinalResults (Sensor)\"; %full path to the directory where the statistical .csv file needs to be stored.
+        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Sensor Results\Dataset1\"; %full path to the directory where the new data needs to be stored. 
+        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Sensor Results\Dataset1\"; %full path to the directory where the dataset information needs to be stored
+        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Sensor Results\Dataset1\"; %full path to the directory where the statistical .csv file needs to be stored.
     %%%
     % MAP NAME VARIABLES
     %%%
@@ -52,9 +53,9 @@ clear all; %clear workspace
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
         graph_results_map_name = '';
-        microstates_clusters_map_name = 'Microstates';
+        microstates_clusters_map_name = '7';
         microstates_clusters_file_name = "microstates";
-        microstates_results_map_name = 'Results';
+        microstates_results_map_name = '7';
         
     %%%
     % FREQUENCY RANGES
@@ -66,7 +67,7 @@ clear all; %clear workspace
         delta_frequency_range = []; % frequency range for the delta frequency band (Hz)
         theta_frequency_range = []; % frequency range for the theta frequency band (Hz)
         alpha_frequency_range = []; % frequency range for the alpha frequency band (Hz)
-        beta_frequency_range = [25 30]; % frequency range for the beta frequency band (Hz)
+        beta_frequency_range = []; % frequency range for the beta frequency band (Hz)
     
     %%%
     % ELECTRODES
@@ -117,7 +118,7 @@ clear all; %clear workspace
     % PARTICIPANT INFORMATION
     %%%
 
-        patient_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\Trait_Questionnaires.xlsx";
+        patient_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\Trait_Questionnaires_d1.xlsx";
 
     %%%
     % ANALYSIS INFORMATION
@@ -215,7 +216,7 @@ clear all; %clear workspace
         %MICROSTATES CLUSTERING
         run_clustering_microstates = 1;
         %MICROSTATES ANALYSIS
-        run_analysis_microstates = 0;
+        run_analysis_microstates = 1;
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 2: LOAD IN DATASET %
@@ -431,18 +432,12 @@ if(run_clustering_microstates == 1)
 
             %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
             [current_participant_gfp_peaks] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, "sensor");
+            disp(length(current_participant_gfp_peaks));
             all_participants_gfp_peaks = [all_participants_gfp_peaks current_participant_gfp_peaks];
-            disp(participant_i);
-            disp(length(all_participants_gfp_peaks));
-            %run the microstates analysis
-            %current_participant_microstates = Microstates_Individual(current_participant_region_timeseries, ...
-            %    sample_frequency, epoch_length, 6, "modified k-means", {5, 100});
-            
-            %all_participants_microstates = [all_participants_microstates current_participant_microstates];
-
-%             
+         
         end
-        microstates = Cluster_Microstates(all_participants_gfp_peaks, 7, "modified k-means", "sensor", {3, 200});
+        %run the microstates analysis on all participant maps
+        microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "sensor", {1, 300});
         %save the results in the previously defined map
         Save_Results_To_Directory(microstates, microstates_clusters_file_name, Microstates_Clusters_map);
 else
@@ -466,7 +461,7 @@ if(run_analysis_microstates == 1)
     %%%
     % SUBSTEP 3: READ PATIENT INFORMATION
     %%%
-        [information, participant_ids] = Extract_Rumination_Scores_Dataset1(patient_information);
+        [information, participant_ids] = Extract_Rumination_Scores(patient_information);
 
     %%%
     % SUBSTEP 4: MAIN FOR LOOP
@@ -482,7 +477,7 @@ if(run_analysis_microstates == 1)
             %Tell what is going on (which participant is worked on)
             disp(current_participant_name);
             %Load participant information (rumination score)
-            [current_participant_information] = Extract_Participant_Rumination_Scores_Dataset1(information, participant_ids, current_participant_name);
+            [current_participant_information] = Extract_Participant_Rumination_Scores(information, participant_ids, current_participant_name);
             %load the timeseries of the current participant
             current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));
             %build the complete argument list to be able to extract the specific timeseries
@@ -492,29 +487,19 @@ if(run_analysis_microstates == 1)
             %define the regions which need to be used
             [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
                 electrode_layout_information);
+
             %Plotting(current_participant_region_timeseries, microstates, "sensor", sample_frequency,epoch_length, electrode_locations);
             
-            %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
             [current_participant_microstate_labels, current_participant_values] = ...
-                    Microstates_Cohort(current_participant_region_timeseries, microstates, "sensor", sample_frequency, epoch_length);
-            %gev_tot = [gev_tot current_participant_gev_tot];
-            %gev_k = gev_k + current_participant_gev_k;
-            %all_participants_rumination_scores = [all_participants_rumination_scores current_participant_rumination_score];
-            %all_participants_freq_of_occ = [all_participants_freq_of_occ current_participant_freq_of_occ(2)];
-            %for k = 1:size(microstates,2)
-            %    Plot_Sensor_Topography(microstates(:,k), electrode_locations, true);
-            %end
+                    Microstates_Statistics_Participant(current_participant_region_timeseries, microstates, "sensor", sample_frequency, epoch_length, 8);
 
-            disp(current_participant_information)
             current_participant_values = [current_participant_information current_participant_values];
+
             %save the results in the previously defined map
             Save_Results_To_Directory(current_participant_values, current_participant_name, Microstates_Results_map);
 
         end
-        disp("Averaged Total GEV: ")
-        %disp(sum(gev_tot)/length(gev_tot));
-        disp("Averaged GEV: ")
-        %disp(gev_k./length(gev_tot))
+
 
     %%%
     % SUBSTEP 5: BUILD STATISTICAL ANALYSIS FILE
