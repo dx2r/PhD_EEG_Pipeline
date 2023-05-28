@@ -1,14 +1,13 @@
 %%%
 %
-% General Script that is used to perform Sensor Level Analyses.
+% General Script that is used to perform Source Level Analyses.
 % This is the script in which all variables are defined that will be needed for the further analysis. 
-% Only this file should be used for sensor level analysis. All other functions are wrapped in this script.
+% Only this file should be used for source level analysis. All other functions are wrapped in this script.
 %
 % NOTE: only one analysis can be done at a time. This is done so each analysis has its own unique analysis file for publication on osf.
 % NOTE: Step 8 contains an auditory cue to let you know if a participant has finished, you can delete this.
 %
-% Gert Vanhollebeke (28/07/2022 - )
-% Lore Flipts
+% Gert Vanhollebeke (02/12/2021 - )
 %
 %%%
 
@@ -38,10 +37,11 @@ clear all; %clear workspace
 
         % don't put a backslash at the end of the path
         % example: 'F:\Study - EEGSTRESS\Dataset\EEG Source Data (130 Regios)'
-        location_data_from = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\EEG Data (Sensor)\"; %full path to the directory where the data is located.
-        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\Final (Sensor)\"; %full path to the directory where the new data needs to be stored. 
-        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\FinalResults (Sensor)\"; %full path to the directory where the dataset information needs to be stored
-        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\FinalResults (Sensor)\"; %full path to the directory where the statistical .csv file needs to be stored.
+        location_data_from = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\EEG Data (Source)\"; %full path to the directory where the data is located.
+        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Source Results\Dataset2\"; %full path to the directory where the new data needs to be stored. 
+        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Source Results\Dataset2\"; %full path to the directory where the dataset information needs to be stored
+        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Source Results\Dataset2\"; %full path to the directory where the statistical .csv file needs to be stored.
+       
     %%%
     % MAP NAME VARIABLES
     %%%
@@ -53,9 +53,10 @@ clear all; %clear workspace
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
         graph_results_map_name = '';
-        microstates_clusters_map_name = 'Microstates_final';
+        microstates_clusters_map_name = 'Microstates';
         microstates_clusters_file_name = "microstates";
-        microstates_results_map_name = 'Results_window_8';
+        microstates_results_map_name = 'Statistics';
+        
         
     %%%
     % FREQUENCY RANGES
@@ -68,36 +69,42 @@ clear all; %clear workspace
         theta_frequency_range = []; % frequency range for the theta frequency band (Hz)
         alpha_frequency_range = []; % frequency range for the alpha frequency band (Hz)
         beta_frequency_range = []; % frequency range for the beta frequency band (Hz)
+
+    %%%
+    % BRAIN REGIONS
+    %%%
     
-    %%%
-    % ELECTRODES
-    %%%
-    
-        % selection of the electrodes for which the analysis should be conducted
-        % For more information on which electrodes are available, check the electrode layout file which should be linked below
-        % You can write "Check_Electrode_Layout" in the command window to see all electrodes in the current configuration
-        % This way of working is not efficient, but is done to make sure that the correct electrodes are selected
+        % selection of the brain regions for which the analysis should be conducted
+        % For more information on which brain regions are available and which indices these have, use the function "Check_Brainregions"
+        % You can write "Check_Brainregions" in the command window to see all regions
+        % This way of working is not efficient, but is done to make sure that the correct brain regions are selected, 
+        % so a name (not mandatory) AND a brainregion index should be given.
         %
-        % If the analyses need to be run for specific electrodes, use the following as code:
-        %   electrode_amount = 4;
-        %   electrode_names = {["Fpz","Oz","P4"],...
-        %                       "Fp1",...
-        %                       "Fp2",...
-        %                       "F4",...
-        %                       "F5"};
-        %   electrode_layout_information = 'path\to\matfile\with\electrode_layout.mat';
+        % If the analysis needs to be run for specific brain regions, use the following example:
+        %   brainregion_amount = 4;
+        %   brainregion_indices = {1, ...
+        %                          2, ...
+        %                          [5 13 18],...
+        %                          16};
+        %   brainregion_names = ["",...
+        %                        "Region_name_I_want",...
+        %                        "Always_give_names_when_you_want_to_combine_multiple_regions",...
+        %                        "",...];
         %
-        % If the analyses need to be run for all electrodes, use the following as code:
-        %   electrode_amount = -1;
-        %   electrode_names = ["All_Electrodes"]; %Always use underscore when combining multiple words!
-        %   electrode_layout_information = 'path\to\matfile\with\electrode_layout.mat';
-        
-        electrode_layout_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\electrode_names.mat";
-        electrode_locations = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\electrode_information.mat";
-        electrode_amount = -1;
-        electrode_names = {["All_Electrodes"]};
-            
-    %%%
+        % If the analysis needs to be run for the whole brain, use the following as code:
+        %   brainregion_amount = 1; %ALWAYS 1!!!
+        %   brainregion_indices = {-1};
+        %   brainregion_names = ["Whole_Brain"]; %always use underscores when combining multiple words!
+
+
+        region_aal_information = "D:\UGent\Burgie\Jaar 4\Thesis\GitHub\PhD_EEG_Pipeline\Extern\aal.mat";
+        head_3D_information = "D:\UGent\Burgie\Jaar 4\Thesis\GitHub\PhD_EEG_Pipeline\Extern\inflated.mat";
+        brainregion_amount = 1;
+        brainregion_indices = {-1};
+        brainregion_names = ["Whole_Brain"];
+        brainregions_table = Check_Brainregions();
+
+            %%%
     % EPOCH INFORMATION
     %%%
         
@@ -112,13 +119,14 @@ clear all; %clear workspace
         
         %define the sampling frequency (in Hz)
         % example: sample_frequency = 512; 
-        sample_frequency = 512;
+        sample_frequency = 200;
 
     %%%
     % PARTICIPANT INFORMATION
     %%%
 
-        patient_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\Trait_Questionnaires_d1.xlsx";
+        patient_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset2\Trait_Questionnaires.xlsx";
+        
 
     %%%
     % ANALYSIS INFORMATION
@@ -139,9 +147,9 @@ clear all; %clear workspace
         % for "average_relative_power_all": {bin_width, delta_frequency_range, theta_frequency_range, alpha_frequency_range, beta_frequency_range}
         %   pow_varargin = {0.5, [0.5 4], [4 8], [8 13], [13 30]};
         % for "average_relative_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
-        %   pow_varargin = {0.5, [8 13], [1 40]};
+        %   pow_varargin = {0.5, [8 13], [0.5 40]};
         % for "average_absolute_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
-        %   pow_varargin = {0.5, [8 13], [1 40]};
+        %   pow_varargin = {0.5, [8 13], [0.5 40]};
         % for "average_log_absolute_power_specific": {bin_width, frequency_range_of_interest, whole_frequency_range}
         %   pow_varargin = {0.5, [8 13], [1 40]};
         % for "average_relative_power_specific_fcorrected": {bin_width, frequency_range_of_interest, whole_frequency_range, gamma}
@@ -160,7 +168,7 @@ clear all; %clear workspace
         % for "amplitude_envelope_correlation": {freq_range}
         %   fc_varargin = {[13 20]}
         
-        fc_varargin = [];
+        fc_varargin = {};
         
         %DYNAMIC FUNCTIONAL CONNECTIVITY ANALYSIS
         
@@ -188,7 +196,7 @@ clear all; %clear workspace
         
         graph_varargin = {0};
 
-        %MICROSTATES CLUSTERING ANALYSIS
+                %MICROSTATES CLUSTERING ANALYSIS
 
         analysis_choice_microstates_clustering = "";
         gr_optimal_k = "";
@@ -196,6 +204,8 @@ clear all; %clear workspace
         %MICROSTATES ANALYSIS
 
         analysis_choice_microstates = "";
+        clustering_algorithm = "modified k-means";
+        data_type = "source";
 
     %%%
     % SELECT WHICH ANALYSIS NEED TO BE RUN
@@ -214,9 +224,11 @@ clear all; %clear workspace
         %GRAPH ANALYSIS ANALYSIS
         run_analysis_graph = 0;
         %MICROSTATES CLUSTERING
-        run_clustering_microstates = 0;
+        run_clustering_microstates = 1;
         %MICROSTATES ANALYSIS
-        run_analysis_microstates = 1;
+        run_analysis_microstates = 0;
+        
+
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 2: LOAD IN DATASET %
@@ -240,7 +252,7 @@ if(run_analysis_power == 1)
     % SUBSTEP 2: MAIN FOR LOOP
     %%%
         %first, write the loop for every participant (use parfor for parallel computing)
-        for participant_i = 1:1:dataset_size
+        for participant_i = 1:1:1%dataset_size
             %get the name of the current participant
             current_participant_name = dataset_names(participant_i); 
             %Tell what is going on (which participant is worked on)
@@ -248,37 +260,41 @@ if(run_analysis_power == 1)
             %load the timeseries of the current participant
             current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));                    
             %build the complete argument list to be able to extract the specific timeseries
-            current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
-                                                               electrode_amount,...
-                                                               electrode_names);
+            current_participant_table = Build_Brainregion_Celltable(current_participant_datafile,...
+                                                                    brainregion_amount,...
+                                                                    brainregion_indices,...
+                                                                    brainregion_names);
             %extract only the specific timeseries on which the calculations need to be performed on
-            [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
-                                                                                                                             electrode_layout_information);
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
+
+            current_participant_aal_timeseries = Convert_To_AAL(current_participant_region_timeseries);
+            disp(size(current_participant_region_timeseries))
+            disp(size(current_participant_aal_timeseries))
             %run the power analysis
-            current_participant_values = TF_Calculate_Power(current_participant_region_timeseries,...
-                                                                                        sample_frequency,...
-                                                                                        epoch_length,...
-                                                                                        analysis_choice_power,...
-                                                                                        pow_varargin);
+            %current_participant_values = TF_Calculate_Power(current_participant_region_timeseries,...
+            %                                                                            sample_frequency,...
+            %                                                                            epoch_length,...
+            %                                                                           analysis_choice_power,...
+            %                                                                            pow_varargin);
             
             %save the individual results in the previously defined map
-            Save_Results_To_Directory(current_participant_values,current_participant_name,Power_Results_map);
+            %Save_Results_To_Directory(current_participant_values,current_participant_name,Power_Results_map);
         end
         
     %%%
     % SUBSTEP 3: BUILD STATISTICAL ANALYSIS FILE
     %%%
         %build a table with all obtained results and save it as a .csv file
-        group_power_results = Generate_Paths_All_Together(strcat(location_data_to,"\",pow_results_map_name));
-        statistical_table = Build_Statistical_Table(group_power_results,...
-                                                    pow_results_map_name,...
-                                                    analysis_choice_power,...
-                                                    brainregion_amount,...
-                                                    brainregion_names);
+        %group_power_results = Generate_Paths_All_Together(strcat(location_data_to,"\",pow_results_map_name));
+        %statistical_table = Build_Statistical_Table(group_power_results,...
+        %                                            pow_results_map_name,...
+        %                                            analysis_choice_power,...
+        %                                            brainregion_amount,...
+        %                                            brainregion_names);
         %go to destined location
-        cd(location_data_statistics);
+        %cd(location_data_statistics);
         %save table as .csv file in the destined folder
-        writetable(statistical_table, strcat(pow_results_map_name,".csv"));
+        %writetable(statistical_table, strcat(pow_results_map_name,".csv"));
     
 else
     disp('Power Analysis not selected...');
@@ -305,12 +321,12 @@ if(run_analysis_fc == 1)
             %load the timeseries of the current participant
             current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));
             %build the complete argument list to be able to extract the specific timeseries
-            current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
-                                                               electrode_amount,...
-                                                               electrode_names);
+            current_participant_table = Build_Brainregion_Celltable(current_participant_datafile,...
+                                                                    brainregion_amount,...
+                                                                    brainregion_indices,...
+                                                                    brainregion_names);
             %define the regions which need to be used
-            [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
-                                                                                                                             electrode_layout_information);
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
             %run the functional connectivity analysis
             current_participant_values = TF_Calculate_Functional_Connectivity(current_participant_region_timeseries,...
                                                                                         sample_frequency,...
@@ -423,21 +439,41 @@ if(run_clustering_microstates == 1)
             %load the timeseries of the current participant
             current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));
             %build the complete argument list to be able to extract the specific timeseries
-            current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
-                                                               electrode_amount,...
-                                                               electrode_names);
+            current_participant_table = Build_Brainregion_Celltable(current_participant_datafile,...
+                                                                    brainregion_amount,...
+                                                                    brainregion_indices,...
+                                                                    brainregion_names);
             %define the regions which need to be used
-            [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
-                                                                                                                             electrode_layout_information);
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
 
             %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
-            [current_participant_gfp_peaks] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, "sensor");
-            disp(length(current_participant_gfp_peaks));
+            [current_participant_gfp_peaks] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, data_type);
+
             all_participants_gfp_peaks = [all_participants_gfp_peaks current_participant_gfp_peaks];
-         
+            disp(participant_i);
+            disp(length(all_participants_gfp_peaks));
+            %run the microstates analysis
+            %current_participant_microstates = Microstates_Individual(current_participant_region_timeseries, ...
+            %    sample_frequency, epoch_length, 6, "modified k-means", {5, 100});
+            
+            %all_participants_microstates = [all_participants_microstates current_participant_microstates];
+
+%             
         end
-        %run the microstates analysis on all participant maps
-        microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "sensor", {1, 300});
+        microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "source", {10, 300});
+
+%         [~, strongest_regions_indices] = maxk(microstates,10,1);
+%         for i = 1:size(microstates,2)
+%             strongest_regions = current_participant_region_names{strongest_regions_indices(:,i),1};
+%             disp(strongest_regions);
+%         end
+%         microstates_aal = Convert_To_AAL(microstates);
+%         disp(size(microstates));
+%         disp(size(microstates_aal));
+%         for i = 1:size(microstates,2)
+%             Plot_Source_Topography(microstates_aal(:,i), region_aal_information, head_3D_information);
+%         end
+
         %save the results in the previously defined map
         Save_Results_To_Directory(microstates, microstates_clusters_file_name, Microstates_Clusters_map);
 else
@@ -457,6 +493,17 @@ if(run_analysis_microstates == 1)
         microstates_file = Read_File_Directory(location_data_to,microstates_clusters_map_name,microstates_clusters_file_name);
         microstates = Open_Mat_File(microstates_file);
         microstates_amount = size(microstates,2);
+        
+        [~, strongest_regions_indices] = maxk(microstates,10,1);
+        for i = 1:size(microstates,2)
+            strongest_regions = brainregions_table{strongest_regions_indices(:,i),1};
+            disp(strongest_regions);
+        end
+        microstates_aal = Convert_To_AAL(microstates);
+
+        for i = 1:size(microstates,2)
+            Plot_Source_Topography(microstates_aal(:,i), region_aal_information, head_3D_information);
+        end
 
     %%%
     % SUBSTEP 3: READ PATIENT INFORMATION
@@ -468,7 +515,7 @@ if(run_analysis_microstates == 1)
     %%%
         %first, write the loop for every participant (use parfor for parallel computing)
         gev_tot = [];
-        gev_k = zeros(1,microstates_amount);
+        gev_k = zeros(1,4);
         all_participants_rumination_scores = [];
         all_participants_freq_of_occ = [];
         for participant_i = 1:1:dataset_size
@@ -481,25 +528,36 @@ if(run_analysis_microstates == 1)
             %load the timeseries of the current participant
             current_participant_datafile = Extract_Timeseries_From_Structure(dataset_files(participant_i));
             %build the complete argument list to be able to extract the specific timeseries
-            current_participant_table = Build_Sensor_Celltable(current_participant_datafile,...
-                                                               electrode_amount,...
-                                                               electrode_names);
+            current_participant_table = Build_Brainregion_Celltable(current_participant_datafile,...
+                                                                    brainregion_amount,...
+                                                                    brainregion_indices,...
+                                                                    brainregion_names);
             %define the regions which need to be used
-            [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
-                electrode_layout_information);
-            disp(mean(current_participant_region_timeseries, "all"));
-            %Plotting(current_participant_region_timeseries, microstates, "sensor", sample_frequency,epoch_length, electrode_locations);
+            [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
+
+            
+
+            %Plotting(current_participant_region_timeseries, microstates, sample_frequency,epoch_length, electrode_locations);
             
             %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
             [current_participant_microstate_labels, current_participant_values] = ...
-                    Microstates_Cohort(current_participant_region_timeseries, microstates, "sensor", sample_frequency, epoch_length);
-
+                    Microstates_Cohort(current_participant_region_timeseries, microstates, data_type, sample_frequency, epoch_length);
+            %gev_tot = [gev_tot current_participant_gev_tot];
+            %gev_k = gev_k + current_participant_gev_k;
+            %all_participants_rumination_scores = [all_participants_rumination_scores current_participant_rumination_score];
+            %all_participants_freq_of_occ = [all_participants_freq_of_occ current_participant_freq_of_occ(2)];
+            %for k = 1:size(microstates,2)
+            %    Plot_Sensor_Topography(microstates(:,k), electrode_locations, true);
+            %end
             current_participant_values = [current_participant_information current_participant_values];
             %save the results in the previously defined map
             Save_Results_To_Directory(current_participant_values, current_participant_name, Microstates_Results_map);
 
         end
-
+        disp("Averaged Total GEV: ")
+        %disp(sum(gev_tot)/length(gev_tot));
+        disp("Averaged GEV: ")
+        %disp(gev_k./length(gev_tot))
 
     %%%
     % SUBSTEP 5: BUILD STATISTICAL ANALYSIS FILE
@@ -509,9 +567,8 @@ if(run_analysis_microstates == 1)
         statistical_table = Build_Statistical_Table(group_microstates_results,...
                                                     microstates_results_map_name,...
                                                     "microstates",...
-                                                    electrode_amount,...
-                                                    electrode_names, ...
-                                                    microstates_amount);
+                                                    brainregion_amount,...
+                                                    brainregion_names);
         %go to destined location
         cd(location_data_statistics);
         %save table as .csv file in the destined folder

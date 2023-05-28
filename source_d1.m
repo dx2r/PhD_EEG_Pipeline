@@ -38,9 +38,9 @@ clear all; %clear workspace
         % don't put a backslash at the end of the path
         % example: 'F:\Study - EEGSTRESS\Dataset\EEG Source Data (130 Regios)'
         location_data_from = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\EEG Data (Source)\"; %full path to the directory where the data is located.
-        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\Results (Source)\"; %full path to the directory where the new data needs to be stored. 
-        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\Results (Source)\"; %full path to the directory where the dataset information needs to be stored
-        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Datasets\Dataset1\Results (Source)\"; %full path to the directory where the statistical .csv file needs to be stored.
+        location_data_to = "D:\UGent\Burgie\Jaar 4\Thesis\Source Results\Dataset1\"; %full path to the directory where the new data needs to be stored. 
+        location_data_information = "D:\UGent\Burgie\Jaar 4\Thesis\Source Results\Dataset1\"; %full path to the directory where the dataset information needs to be stored
+        location_data_statistics = "D:\UGent\Burgie\Jaar 4\Thesis\Source Results\Dataset1\"; %full path to the directory where the statistical .csv file needs to be stored.
        
     %%%
     % MAP NAME VARIABLES
@@ -53,9 +53,9 @@ clear all; %clear workspace
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
         graph_results_map_name = '';
-        microstates_clusters_map_name = 'Microstates-Clusters';
+        microstates_clusters_map_name = 'Microstates_10';
         microstates_clusters_file_name = "microstates";
-        microstates_results_map_name = 'Microstates-Results';
+        microstates_results_map_name = 'Statistics_gfp';
         
         
     %%%
@@ -119,7 +119,7 @@ clear all; %clear workspace
         
         %define the sampling frequency (in Hz)
         % example: sample_frequency = 512; 
-        sample_frequency = 200;
+        sample_frequency = 512;
 
     %%%
     % PARTICIPANT INFORMATION
@@ -224,9 +224,9 @@ clear all; %clear workspace
         %GRAPH ANALYSIS ANALYSIS
         run_analysis_graph = 0;
         %MICROSTATES CLUSTERING
-        run_clustering_microstates = 1;
+        run_clustering_microstates = 0;
         %MICROSTATES ANALYSIS
-        run_analysis_microstates = 0;
+        run_analysis_microstates = 1;
         
 
         
@@ -460,18 +460,19 @@ if(run_clustering_microstates == 1)
 
 %             
         end
-        microstates = Cluster_Microstates(all_participants_gfp_peaks, 8, clustering_algorithm, data_type, {5, 100});
-        [~, strongest_regions_indices] = maxk(microstates,10,1);
-        for i = 1:size(microstates,2)
-            strongest_regions = current_participant_region_names{strongest_regions_indices(:,i),1};
-            disp(strongest_regions);
-        end
-        microstates_aal = Convert_To_AAL(microstates);
-        disp(size(microstates));
-        disp(size(microstates_aal));
-        for i = 1:size(microstates,2)
-            Plot_Source_Topography(microstates_aal(:,i), region_aal_information, head_3D_information);
-        end
+        microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "source", {1, 300});
+
+%         [~, strongest_regions_indices] = maxk(microstates,10,1);
+%         for i = 1:size(microstates,2)
+%             strongest_regions = current_participant_region_names{strongest_regions_indices(:,i),1};
+%             disp(strongest_regions);
+%         end
+%         microstates_aal = Convert_To_AAL(microstates);
+%         disp(size(microstates));
+%         disp(size(microstates_aal));
+%         for i = 1:size(microstates,2)
+%             Plot_Source_Topography(microstates_aal(:,i), region_aal_information, head_3D_information);
+%         end
 
         %save the results in the previously defined map
         Save_Results_To_Directory(microstates, microstates_clusters_file_name, Microstates_Clusters_map);
@@ -493,16 +494,16 @@ if(run_analysis_microstates == 1)
         microstates = Open_Mat_File(microstates_file);
         microstates_amount = size(microstates,2);
         
-        [~, strongest_regions_indices] = maxk(microstates,10,1);
-        for i = 1:size(microstates,2)
-            strongest_regions = brainregions_table{strongest_regions_indices(:,i),1};
-            disp(strongest_regions);
-        end
-        microstates_aal = Convert_To_AAL(microstates);
-
-        for i = 1:size(microstates,2)
-            Plot_Source_Topography(microstates_aal(:,i), region_aal_information, head_3D_information);
-        end
+%         [~, strongest_regions_indices] = maxk(microstates,10,1);
+%         for i = 1:size(microstates,2)
+%             strongest_regions = brainregions_table{strongest_regions_indices(:,i),1};
+%             disp(strongest_regions);
+%         end
+%         microstates_aal = Convert_To_AAL(microstates);
+% 
+%         for i = 1:size(microstates,2)
+%             Plot_Source_Topography(microstates_aal(:,i), region_aal_information, head_3D_information);
+%         end
 
     %%%
     % SUBSTEP 3: READ PATIENT INFORMATION
@@ -513,10 +514,7 @@ if(run_analysis_microstates == 1)
     % SUBSTEP 4: MAIN FOR LOOP
     %%%
         %first, write the loop for every participant (use parfor for parallel computing)
-        gev_tot = [];
-        gev_k = zeros(1,4);
-        all_participants_rumination_scores = [];
-        all_participants_freq_of_occ = [];
+
         for participant_i = 1:1:dataset_size
             %get the name of the current participant
             current_participant_name = dataset_names(participant_i); 
@@ -534,29 +532,18 @@ if(run_analysis_microstates == 1)
             %define the regions which need to be used
             [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
 
-            
-
             %Plotting(current_participant_region_timeseries, microstates, sample_frequency,epoch_length, electrode_locations);
             
-            %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
+
             [current_participant_microstate_labels, current_participant_values] = ...
-                    Microstates_Cohort(current_participant_region_timeseries, microstates, data_type, sample_frequency, epoch_length);
-            %gev_tot = [gev_tot current_participant_gev_tot];
-            %gev_k = gev_k + current_participant_gev_k;
-            %all_participants_rumination_scores = [all_participants_rumination_scores current_participant_rumination_score];
-            %all_participants_freq_of_occ = [all_participants_freq_of_occ current_participant_freq_of_occ(2)];
-            %for k = 1:size(microstates,2)
-            %    Plot_Sensor_Topography(microstates(:,k), electrode_locations, true);
-            %end
+                Microstates_Statistics_Participant(current_participant_region_timeseries, microstates, "source", sample_frequency, epoch_length, 8);
+
             current_participant_values = [current_participant_information current_participant_values];
             %save the results in the previously defined map
             Save_Results_To_Directory(current_participant_values, current_participant_name, Microstates_Results_map);
 
         end
-        disp("Averaged Total GEV: ")
-        %disp(sum(gev_tot)/length(gev_tot));
-        disp("Averaged GEV: ")
-        %disp(gev_k./length(gev_tot))
+
 
     %%%
     % SUBSTEP 5: BUILD STATISTICAL ANALYSIS FILE
@@ -567,7 +554,8 @@ if(run_analysis_microstates == 1)
                                                     microstates_results_map_name,...
                                                     "microstates",...
                                                     brainregion_amount,...
-                                                    brainregion_names);
+                                                    brainregion_names,...
+                                                    microstates_amount);
         %go to destined location
         cd(location_data_statistics);
         %save table as .csv file in the destined folder

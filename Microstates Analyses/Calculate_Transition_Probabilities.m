@@ -24,6 +24,7 @@ for microstate_k = 1:microstates_amount
 end
 
 transition_probabilities = transition_probabilities ./ sum(transition_probabilities,2);
-transition_probabilities_flattened = reshape(transition_probabilities, [1, microstates_amount * microstates_amount]);
+
+transition_probabilities_flattened = reshape(transition_probabilities', [1, microstates_amount * microstates_amount]);
 
 end

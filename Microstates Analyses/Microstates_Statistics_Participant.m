@@ -31,7 +31,7 @@ end
 
 % Backfitting
 label_timeseries = Backfitting(maps, microstates, data_type);
-%smoothened_microstate_label_timeseries = Temporal_Smoothing(microstates, microstate_label_timeseries, 8, sample_frequency, epoch_length);
+
 
 % Temporal smoothing
 smoothened_label_timeseries = Window_Smoothing_EEGLAB(maps, label_timeseries, microstates, window_length, data_type, sample_frequency, epoch_length);

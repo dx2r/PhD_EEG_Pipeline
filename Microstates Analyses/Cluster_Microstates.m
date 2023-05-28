@@ -38,7 +38,7 @@ source_dispersion = zeros(microstates_amount,1);
 [regions_amount, ~] = size(maps);
 microstates = zeros(regions_amount, microstates_amount, microstates_amount);
 
-for k = 7%2:microstates_amount
+for k = 8%2:microstates_amount
     disp(strcat("Testing ", num2str(k), "/", num2str(microstates_amount), " number of clusters..."));
     [microstates_k, gev_k, labels_k] = Clustering(maps, k, clustering_method, data_type, varargin{1});
     gev(k) = gev_k;
@@ -50,11 +50,11 @@ end
 microstates_amount_range = 2:microstates_amount;
 gev = gev(2:end);
 dispersion = dispersion(2:end);
-%save("dispersion_d2.mat", "dispersion")
+%save("dispersion_source_d2.mat", "dispersion")
 
-optimal_microstates_amount = 7;
+optimal_microstates_amount = 8;
 %[optimal_microstates_amount, klnorm] = Calculate_KLnorm_criterion(dispersion, maps, microstates_amount_range);
-%save("klnorm_d2.mat", "klnorm")
+%save("klnorm_source_d2.mat", "klnorm")
 
 %optimal_microstates_amount = Kneedle_Algorithm(gev, microstates_amount_range, microstates_amount_range) ;
 optimal_microstates = microstates(:,1:optimal_microstates_amount,optimal_microstates_amount);

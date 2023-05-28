@@ -53,9 +53,9 @@ clear all; %clear workspace
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
         graph_results_map_name = '';
-        microstates_clusters_map_name = 'Microstates';
+        microstates_clusters_map_name = 'plotting';
         microstates_clusters_file_name = "microstates";
-        microstates_results_map_name = 'Final';
+        microstates_results_map_name = 'plotting';
         
     %%%
     % FREQUENCY RANGES
@@ -214,9 +214,9 @@ clear all; %clear workspace
         %GRAPH ANALYSIS ANALYSIS
         run_analysis_graph = 0;
         %MICROSTATES CLUSTERING
-        run_clustering_microstates = 0;
+        run_clustering_microstates = 1;
         %MICROSTATES ANALYSIS
-        run_analysis_microstates = 1;
+        run_analysis_microstates = 0;
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % STEP 2: LOAD IN DATASET %
@@ -415,6 +415,8 @@ if(run_clustering_microstates == 1)
         %first, write the loop for every participant (use parfor for parallel computing)
         all_participants_microstates = [];
         all_participants_gfp_peaks = [];
+        all_participants_gfp_indices = [];
+        length_peaks = [];
         for participant_i = 1:1:dataset_size
             %get the name of the current participant
             current_participant_name = dataset_names(participant_i); 
@@ -430,15 +432,19 @@ if(run_clustering_microstates == 1)
             [current_participant_region_timeseries, current_participant_region_names] = Extract_Sensor_Time_Series_And_Names(current_participant_table,...
                                                                                                                              electrode_layout_information);
 
-            %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
-            [current_participant_gfp_peaks] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, "sensor");
+            [current_participant_gfp_peaks, current_participant_gfp_indices] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, "sensor");
             all_participants_gfp_peaks = [all_participants_gfp_peaks current_participant_gfp_peaks];
+            length_peaks = [length_peaks length(current_participant_gfp_peaks)];
+            all_participants_gfp_indices = [all_participants_gfp_indices diff(current_participant_gfp_indices)];
         
         end
 
         %run the microstates analysis on all participant maps
         microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "sensor", {10, 300});
-
+        disp(mean(length_peaks))
+        disp(std(length_peaks))
+        disp(mean(all_participants_gfp_indices));
+        disp(std(all_participants_gfp_indices));
         %save the results in the previously defined map
         Save_Results_To_Directory(microstates, microstates_clusters_file_name, Microstates_Clusters_map);
 else
