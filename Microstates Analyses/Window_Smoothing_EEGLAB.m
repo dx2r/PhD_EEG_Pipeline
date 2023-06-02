@@ -61,3 +61,16 @@ while abs(GEV_old - GEV) >= thresh * GEV && max_iterations > iter  && mean(label
 end
 
 labels_new = labels;
+% 
+% newcolors = [0.9882    0.5608    0.0392; 0.8392    0.0745    0.0745; 0.3922    0.8314    0.0745; 0    0.4471    0.7412];
+% 
+% figure;
+% disp(max(max(correlation_with_reward)));
+% correlation_with_reward = correlation_with_reward ./max(max(correlation_with_reward));
+% 
+% for k = 1:4
+%     plot(abs(correlation(k,1:300)), LineWidth=2, Color=newcolors(k,:));
+%     hold on
+%     plot((correlation_with_reward(k,1:300)), LineWidth=2, LineStyle="--", Color=newcolors(k,:));
+%     hold on
+% end

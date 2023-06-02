@@ -53,9 +53,9 @@ clear all; %clear workspace
         dynfc_resuls_map_name = '';
         dyncausal_results_map_name = '';
         graph_results_map_name = '';
-        microstates_clusters_map_name = 'Microstates_10';
+        microstates_clusters_map_name = 'Microstates_4';
         microstates_clusters_file_name = "microstates";
-        microstates_results_map_name = 'Statistics_gfp';
+        microstates_results_map_name = 'Statistics_4';
         
         
     %%%
@@ -224,9 +224,9 @@ clear all; %clear workspace
         %GRAPH ANALYSIS ANALYSIS
         run_analysis_graph = 0;
         %MICROSTATES CLUSTERING
-        run_clustering_microstates = 0;
+        run_clustering_microstates = 1;
         %MICROSTATES ANALYSIS
-        run_analysis_microstates = 1;
+        run_analysis_microstates = 0;
         
 
         
@@ -431,6 +431,8 @@ if(run_clustering_microstates == 1)
         %first, write the loop for every participant (use parfor for parallel computing)
         all_participants_microstates = [];
         all_participants_gfp_peaks = [];
+        all_participants_gfp_indices = [];
+        length_peaks = [];
         for participant_i = 1:1:dataset_size
             %get the name of the current participant
             current_participant_name = dataset_names(participant_i); 
@@ -447,20 +449,20 @@ if(run_clustering_microstates == 1)
             [current_participant_region_timeseries, current_participant_region_names] = Extract_Time_Series_And_Names(current_participant_table);
 
             %current_participant_region_timeseries = bandpass(current_participant_region_timeseries, beta_frequency_range, sample_frequency);
-            [current_participant_gfp_peaks] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, data_type);
+            [current_participant_gfp_peaks, current_participant_gfp_indices] = Extract_GFP_Peaks(current_participant_region_timeseries, sample_frequency, epoch_length, data_type);
 
             all_participants_gfp_peaks = [all_participants_gfp_peaks current_participant_gfp_peaks];
-            disp(participant_i);
-            disp(length(all_participants_gfp_peaks));
-            %run the microstates analysis
-            %current_participant_microstates = Microstates_Individual(current_participant_region_timeseries, ...
-            %    sample_frequency, epoch_length, 6, "modified k-means", {5, 100});
-            
-            %all_participants_microstates = [all_participants_microstates current_participant_microstates];
+
+            length_peaks = [length_peaks length(current_participant_gfp_peaks)];
+            all_participants_gfp_indices = [all_participants_gfp_indices diff(current_participant_gfp_indices)];
 
 %             
         end
-        microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "source", {1, 300});
+        microstates = Cluster_Microstates(all_participants_gfp_peaks, 10, "modified k-means", "source", {2, 300});
+        disp(mean(length_peaks))
+        disp(std(length_peaks))
+        disp(mean(all_participants_gfp_indices));
+        disp(std(all_participants_gfp_indices));
 
 %         [~, strongest_regions_indices] = maxk(microstates,10,1);
 %         for i = 1:size(microstates,2)

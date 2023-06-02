@@ -9,7 +9,7 @@ function [spatial_correlation] = Calculate_Spatial_Correlation(eeg_map, microsta
 %
 %%%
 
-if data_type == 'sensor'
+if data_type == "sensor"
     eeg_map = eeg_map - mean(eeg_map, 1);
     microstate_map = microstate_map - mean(microstate_map, 1);
 end

@@ -44,6 +44,6 @@ ax = gca;
 colormap(ax,cmap);
 caxis([0,max(abs(data_timepoint),[],"all")]);
 disp(max(abs(data_timepoint)));
-camlight headlight ; lighting gouraud ; material dull
+camlight (-10,-90) ; lighting gouraud ; material dull
 
 end
