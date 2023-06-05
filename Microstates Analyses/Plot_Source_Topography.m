@@ -1,6 +1,11 @@
 function [] = Plot_Source_Topography(data_timepoint, region_information, tissue_information)
 
 %%%
+% Code for this function is based on : 
+% Tait and Zhang (2021), +microstate: A MATLAB toolbox for brain microstate analysis in sensor and cortical EEG/MEG,
+% bioRxiv 2021.07.13.452193. doi: 10.1101/2021.07.13.452193
+% 
+% 
 % Function that ...
 % 
 % Lore Flipts

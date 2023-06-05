@@ -1,4 +1,4 @@
-function [microstates, labels, global_explained_variance] = Modified_K_Means(data, K, data_type, max_iter)
+function [microstates, labels, global_explained_variance] = Modified_K_Means(maps, number_of_clusters_K, data_type, max_iter)
 
 %%%
 % Function that ...
@@ -14,43 +14,39 @@ function [microstates, labels, global_explained_variance] = Modified_K_Means(dat
 %%%
 
 % Initialization
-[channels, samples] = size(data);
-squared_sum_data = sum(data.^2, 'all');
-variance_data = squared_sum_data / (samples * (channels - 1));
-
-initial_map_indices = randperm(samples, K);
-microstates = data(:, initial_map_indices);
-microstates = microstates ./ vecnorm(microstates, 2, 1); % normalize
-
-%data = data ./ vecnorm(data, 2, 1); % normalize
-
-%variance_microstates = 0;
 convergence_criterium = 1e-6;
 global_explained_variance = 0;
-%plot_gev = [];
-%plot_iter = [];
 
+% Choose K maps as initial microstate centroids
+initial_map_indices = randperm(samples, number_of_clusters_K);
+microstates = maps(:, initial_map_indices);
+microstates = microstates ./ vecnorm(microstates, 2, 1); % normalize
+
+
+% Start iteration scheme
 for iter = 1:max_iter
 
     old_global_explained_variance = global_explained_variance;
-    activations = (microstates' * data);
+
+    % Calculate how well maps and microstates align (= activation) and
+    % label accordingly
+    activations = (microstates' * maps);
     [~, labels] = max(activations.^2); 
-
-    %pgev = Calculate_Global_Explained_Variance(data, microstates, labels, data_type);
-    %plot_gev = [plot_gev pgev];
-    %plot_iter = [plot_iter iter];
-
-    for k = 1:K
-        data_microstate_k = data(:, labels==k);
+    
+    % Calculate new centroids
+    for k = 1:number_of_clusters_Ks
+        data_microstate_k = maps(:, labels==k);
         S_k = data_microstate_k * data_microstate_k';
         [eigenvectors,eigenvalues] = eig(S_k,'vector');
         [~, idx_max_eigenvalue] = max(abs(eigenvalues));
         microstates(:, k) = eigenvectors(:,idx_max_eigenvalue);
-        microstates(:, k) = microstates(:, k) ./ vecnorm(microstates(:, k), 2, 1);
+        microstates(:, k) = microstates(:, k) ./ vecnorm(microstates(:, k), 2, 1); % normalize microstates
     end
 
-    global_explained_variance = Calculate_Global_Explained_Variance(data, microstates, labels, data_type);
+    % Calculate new GEV
+    global_explained_variance = Calculate_Global_Explained_Variance(maps, microstates, labels, data_type);
     
+    % Check convergence
     if abs(global_explained_variance - old_global_explained_variance) <= convergence_criterium * global_explained_variance
         convergence_iter = iter;
         disp(strcat("Convergence of modified k-means in ", num2str(convergence_iter), "/", num2str(max_iter), " iterations"));
@@ -58,33 +54,19 @@ for iter = 1:max_iter
     end
 end
 
-%save('plotgev2.mat', "plot_gev");
-%save('plotiter2.mat', "plot_iter")
-
 % Absolute value for source data
 if(strcmp(data_type, "source"))
     microstates = abs(microstates);
 end
 
-%variance_explained = 1 - variance_microstates/variance_data;
-activations_all_states = (microstates' * data);
-
+% Calculate final labels
+activations_all_states = (microstates' * maps);
 [~, labels] = max(activations_all_states.^2);
+
+% Create activation vector
 activations = zeros(size(activations_all_states));
 for n = 1:length(labels)
     activations(labels(n),n) = activations_all_states(labels(n),n);
 end
-
-%MSE = mean(mean((data - microstates * activations).^2));
-%dispersion = Calculate_Dispersion(data, microstates, labels);
-
-% for k = 1:K
-%     path = 'cluster' + sprintf("%d",k) + '.mat';
-%     idx_k = labels==k;
-%     cluster_k = data(:,idx_k);
-%     idx = randsample(length(cluster_k),100)';
-%     cluster_k = cluster_k(:,idx);
-%     save(path,"cluster_k");
-% end
 
 end
