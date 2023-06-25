@@ -1,9 +1,9 @@
 function [optimal_microstates_amount, KLnorm] = Calculate_KLnorm_criterion(data, dispersions, microstates_amount_range)
 
 %%%
-% Function that calculates the cluster dispersion, which is a measure of
-% the quality of the clustering
-% 
+% Function that calculates the normalized krzanowski lai criterion, based on: 
+% M. M. Micah, M. De Lucia, D. Brunet, and C. M. Michel, "Principles of Topographic Analyses for Electrical Neuroimaging"
+%
 % Lore Flipts
 %
 % INPUT:
