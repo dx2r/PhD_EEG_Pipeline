@@ -1,19 +1,19 @@
-function [] = Plot_Sensor_Topography(data_timepoint, channel_information, plot_layout, i)
+function [] = Plot_Sensor_Topography(data_timepoint, path_electrode_positions, plot_layout)
 
 %%%
-% Function that ...
+% Function that plots a sensor topography map
 % 
 % Lore Flipts
 %
 % INPUT:
-%   
-%
-% OUTPUT:
-%   
+%   data_timepoint: N*1 double matrix containing a single map (e.g. a microstate map). (N = #timeseries) 
+%   path_electrode_positions: path to file containing the 2D electrode positions for the used cap 
+%       (e.g. '\...\Extern\electrode_information_d1.mat')
+%   plot_layout: boolean indicating if the headshape should be plotted
 %
 %%%
 
-[names, x_channel, y_channel, headshape] = Extract_Channel_Locations(channel_information);
+[names, x_channel, y_channel, headshape] = Extract_Electrode_Positions(path_electrode_positions);
 
 x_interpolated = linspace(min(x_channel), max(x_channel), 400);
 y_interpolated = linspace(min(y_channel), max(y_channel), 400);
@@ -31,7 +31,6 @@ contourf(x_grid, y_grid, potential, 100, LineColor='None');
 if plot_layout
     hold on;
     scatter(x_channel,y_channel, 20, 'r','filled');
-    %scatter(x_channel,y_channel, 10, 'k','filled');
     text(x_channel, y_channel+0.005, names, FontSize=6, HorizontalAlignment='center', VerticalAlignment='bottom', FontWeight='bold');
     hold on;
     for i = 1:length(headshape)
@@ -43,14 +42,6 @@ axis square
 axis off
 cmap = Build_Red_Blue_Colormap();
 colormap(cmap);
-%set(gcf, 'color', 'none');    
-%set(gca, 'color', 'none');
-%exportgraphics(gcf,'transparent.eps',...   % since R2020a
-%    'ContentType','vector')%,...
-    %'BackgroundColor','none')
 
-%set(fig, 'visible', 'on'); 
-path = 'D:\UGent\Burgie\Jaar 4\Thesis\Temp_Figures\cluster_4\' + sprintf("%d",i) + '.png';
-%saveas(fig, path);
 
 end

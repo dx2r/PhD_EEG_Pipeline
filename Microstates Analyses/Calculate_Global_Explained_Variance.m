@@ -1,34 +1,37 @@
-function [gev_tot, gev_k] = Calculate_Global_Explained_Variance(data, microstates, labels, data_type)
+function [total_global_explained_variance, individual_global_explained_variance] = Calculate_Global_Explained_Variance(data, microstates, labels, data_type)
 
 %%%
-% [1] M. M. Micah, M. De Lucia, D. Brunet, and C. M. Michel, ‘Principles of Topographic Analyses for Electrical Neuroimaging’, 
-% in Brain Signal Analysis: Advances in Neuroelectric and Neuromagnetic Methods, 
-% T. C. Handy, Ed. The MIT Press, 2009, p. 0. doi: 10.7551/mitpress/9780262013086.003.0002.
-
-
+% Function that calculates the global explained variance for a clustering
+% 
+% Lore Flipts
+%
+% INPUT:
+%   data: N*P double matrix. (N = #timeseries, M = #gfp peaks) 
+%   microstates: N*K double matrix (N = #timeseries, K = #amount of microstates)
+%   labels: N*1 double matrix indicating microstate labels
+%   data_type: string indicating the data type: "sensor" or "source"
+%
+% OUTPUT:
+%   total_global_explained_variance: double indicating total GEV
+%   individual_global_explained_variance: 1*K double matrix indicating GEV
+%       for each microstate cluster
+%
 %%%
 
-K = size(microstates,2);
-
-if(strcmp(data_type, "sensor"))
-    gfp = Calculate_Sensor_Global_Field_Power(data);
-elseif(strcmp(data_type, "source"))
-    gfp = Calculate_Source_Global_Field_Power(data);
-else
-    disp('The data type is invalid. Enter either sensor or source as data type.')
-end
+microstates_amount = size(microstates,2);
 
 
-segmentation = microstates(:,labels);
-gev_k = zeros(1,K);
+global_field_power = Calculate_Global_Field_Power(data, data_type);
 
-for k = 1:K
-    idx_k = labels==k;
+microstate_timeseries = microstates(:,labels);
+individual_global_explained_variance = zeros(1,microstates_amount);
 
-    spatial_correlation_k = Calculate_Spatial_Correlation(data(:,idx_k), segmentation(:,idx_k), data_type);
+for label_k = 1:microstates_amount
 
-    gev_k(k) = sum((gfp(idx_k) .* spatial_correlation_k).^2) / sum(gfp.^2);
+    spatial_correlation_k = Calculate_Spatial_Correlation(data(:,labels==label_k), microstate_timeseries(:,labels==label_k), data_type);
+
+    individual_global_explained_variance(label_k) = sum((global_field_power(labels==label_k) .* spatial_correlation_k).^2) / sum(global_field_power.^2);
 
 end
 
-gev_tot = sum(gev_k);
+total_global_explained_variance = sum(individual_global_explained_variance);

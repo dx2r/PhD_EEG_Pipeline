@@ -1,8 +1,17 @@
 function[aal] = USCB_To_AAL(uscb, aal)
 
 %%%
+% Function that maps USCBrain atlas regions to AAL atlas regions
 % 
-
+% Lore Flipts
+%
+% INPUT:
+%   uscb: N_B*1 double matrix with map in uscbrain atlas. (N_B = #timeseries_uscb) 
+%   aal: N_A*1 double matrix with map in aal atlas. (N_A = #timeseries_aal) 
+%
+% OUTPUT:
+%   aal: N_A*1 double matrix with map in aal atlas. (N_A = #timeseries_aal)
+%
 %%%
 
 aal(61) = nanmean([aal(61),uscb(1)]);

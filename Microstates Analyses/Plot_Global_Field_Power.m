@@ -1,23 +1,23 @@
-function [] = Plot_Global_Field_Power(eeg_values, gfp_values, gfp_peaks, sample_frequency)
+function [] = Plot_Global_Field_Power(data, gfp_values, gfp_peaks, sample_frequency)
 
 %%%
-% Function that ...
+% Function that plots the global field power and the eeg signals together
 % 
 % Lore Flipts
 %
 % INPUT:
-%   
-%
-% OUTPUT:
-%   
+%   data: N*M double matrix. (N = #timeseries, M = #timepoints) 
+%   gfp_values: 1*M double matrix containing the global field power values
+%   gfp_peaks: 1*P double matrix containing the indices of the gfp peaks (P = #gfp peaks)
+%   sample_freq: double indicating the sample frequency (Hz)
 %
 %%%
 
-eeg_values = transpose(eeg_values);
+data = transpose(data);
 time = linspace(1,length(gfp_values)/sample_frequency*1000, length(gfp_values));
 gfp_peaks = gfp_peaks./sample_frequency .*1000;
 fig = figure();
-%fig.Position = [100 100 1500 300];
+
 fig.Position = [100 100 2500 500];
 left_color = [0 0 0]; %[235 0 0]./255;
 right_color = [0 0 0];
@@ -32,23 +32,17 @@ xlabel('Time [ms]', FontSize=18)
 hold on
 
 yyaxis left
-plot(time, eeg_values(:,1),'k-',LineWidth=0.05, DisplayName='EEG measurements');
-plot(time, eeg_values,'k-',LineWidth=0.05, HandleVisibility='off');
+plot(time, data(:,1),'k-',LineWidth=0.05, DisplayName='EEG measurements');
+plot(time, data,'k-',LineWidth=0.05, HandleVisibility='off');
 ylabel('EEG signals [µV]', FontSize=28)
 ylim([-100,40]);
-%nexttile;
+
 
 xline(gfp_peaks, LineWidth=1, Color='k', alpha=0.15, HandleVisibility='off');
-%xlim([0 time(end)]);
-%ylim([-75,75])
-%xlabel('Time [ms]', FontSize=17)
+
 lgd = legend();
 lgd.FontSize = 25;
 a = get(gca,'XTickLabel');  
 set(gca,'XTickLabel',a,'fontsize',25)
-%set(gcf, 'color', 'none');    
-%set(gca, 'color', 'none');
-%exportgraphics(gcf,'transparent.emf',...   % since R2020a
-%    'ContentType','vector',...
-%    'BackgroundColor','none')
+
 end

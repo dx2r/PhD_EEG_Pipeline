@@ -1,15 +1,17 @@
 function [column_names] = Create_Column_Names_Statistical_Table(columns_amount, microstates_amount)
 
 %%%
-% Function that ...
+% Function that returns the necessary column names for the microstate
+% analysis
 % 
 % Lore Flipts
 %
 % INPUT:
-%   
-%
+%   column_amount: double indicating the amount of columns needed
+%   microstates_amount: double indicating the amount of microstates
+
 % OUTPUT:
-%   
+%   column_names: cell containing the column names for the statistical table
 %
 %%%
 column_names = cell(1,columns_amount);
